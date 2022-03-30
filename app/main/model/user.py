@@ -1,4 +1,5 @@
 
+import string
 from .. import db, flask_bcrypt
 import datetime
 from app.main.model.blacklist import BlacklistToken
@@ -10,11 +11,10 @@ from typing import Union
 class User(db.Model):
     __tablename__ = "user"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
     registered_on = db.Column(db.DateTime, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
-    public_id = db.Column(db.String(100), unique=True)
+    public_id = db.Column(db.String(100), primary_key=True, unique=True)
     username = db.Column(db.String(50), unique=True)
     password_hash = db.Column(db.String(100))
 
@@ -30,7 +30,7 @@ class User(db.Model):
         return flask_bcrypt.check_password_hash(self.password_hash, password)
 
     @staticmethod
-    def encode_auth_token(user_id: int):
+    def encode_auth_token(user_id: str):
         """
         Generates the Auth Token
         :return: string
