@@ -1,4 +1,6 @@
 import uuid
+
+from app.main.enum.type_enum import TypeEnum
 from .. import db
 
 class CartItem(db.Model):
@@ -18,3 +20,4 @@ class CartItem(db.Model):
 
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
     product = db.relationship("Product", back_populates="cart_item")
+    type=db.Column(db.String(50), default=lambda:TypeEnum.CartItem.value)
