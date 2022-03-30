@@ -11,6 +11,14 @@ class UserDto:
     })
 
 
+class CartDto:
+    api = Namespace('cart', description='user related operations')
+    cart = api.model('cart', {
+        'productId': fields.String(required=True, description='productId'),
+        'quantity': fields.Integer(required=True, description='quantity'),
+    })
+
+
 class AuthDto:
     api = Namespace('auth', description='authentication related operations')
     user_auth = api.model('auth_details', {
