@@ -20,14 +20,14 @@ class Cart(Resource):
         """get a user given its identifier"""
         return save_new_cart(user_id)
 
-@api.route('/add-item/<cart_id>')
-@api.param('cart_id', 'The Cart identifier')
-@api.response(404, 'Cart not found.')
-class CartItem(Resource):
-    @api.doc('Add item to cart')
-    @api.response(201, 'Add item successfully created.')
-    @api.expect(_cart, validate=True)
-    def post(self, cart_id):
-        """ Update items in cart """
-        data = request.json
-        return save_new_item(cart_id, data=data)
+# @api.route('/add-item/<cart_id>')
+# @api.param('cart_id', 'The Cart identifier')
+# @api.response(404, 'Cart not found.')
+# class CartItem(Resource):
+#     @api.doc('Add item to cart')
+#     @api.response(201, 'Add item successfully created.')
+#     @api.expect(_cart, validate=True)
+#     def post(self, cart_id):
+#         """ Update items in cart """
+#         data = request.json
+#         return save_new_item(cart_id, data=data)

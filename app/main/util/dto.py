@@ -33,3 +33,9 @@ class CartDto:
         'user_id': fields.Integer(description="user identifier"),
         'cart_items': fields.List(fields.Nested(cart_item_fields), description = "cart items")
     })
+
+class CartItemDtoQuantity:
+    api = Namespace('cart-item', description='cart item related operations')
+    quantity_updater = api.model('CartItem', {
+        'quantity': fields.Integer(required=True, description='The new quantity to update '),
+    })

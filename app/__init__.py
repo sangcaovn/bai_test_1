@@ -5,6 +5,7 @@ from flask import Blueprint
 from .main.controller.user_controller import api as user_ns
 from .main.controller.auth_controller import api as auth_ns
 from .main.controller.cart_controller import api as cart_ns
+from .main.controller.cart_item_controller import api as cart_item_ns
 
 blueprint = Blueprint('api', __name__)
 authorizations = {
@@ -27,3 +28,4 @@ api = Api(
 api.add_namespace(user_ns, path='/user')
 api.add_namespace(auth_ns)
 api.add_namespace(cart_ns ,path='/cart')
+api.add_namespace(cart_item_ns ,path='/cart-item')
