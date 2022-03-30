@@ -1,4 +1,3 @@
-
 import string
 from .. import db, flask_bcrypt
 import datetime

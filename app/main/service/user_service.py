@@ -55,4 +55,3 @@ def generate_token(user: User):
 def save_changes(data: User):
     db.session.add(data)
     db.session.commit()
-

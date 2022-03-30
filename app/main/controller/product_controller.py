@@ -10,6 +10,7 @@ from ..service.product_service import create_a_product, get_product_list, get_a_
 api = ProductDto.api
 _product = ProductDto.product
 
+
 @api.route('/')
 class ProductList(Resource):
     @api.expect(_product, validate=True)
@@ -20,11 +21,14 @@ class ProductList(Resource):
         """Creates a new product """
         data = request.json
         return create_a_product(data=data)
+
     @api.doc('list_of_product')
     @api.marshal_list_with(_product, envelope='data')
     def get(self):
         """Get product list"""
         return get_product_list()
+
+
 @api.route('/<name>')
 @api.param('name', 'The name of product')
 @api.response(404, 'Product not found.')
@@ -38,9 +42,10 @@ class Product(Resource):
             api.abort(404)
         else:
             return product
+
     @api.doc('update a product')
     @api.marshal_with(_product)
     def patch(self, name):
         """Update a product """
         data = request.json
-        return update_a_product(name, data=data)   
+        return update_a_product(name, data=data)
