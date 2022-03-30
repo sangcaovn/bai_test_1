@@ -12,6 +12,6 @@ class CartItem(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     subtotal_ex_tax=db.Column(db.Float, nullable=True)
     tax_total=db.Column(db.Float, nullable=True)
-    tax_total=db.Column(db.Float, nullable=True)
+    total=db.Column(db.Float, nullable=True)
 
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
