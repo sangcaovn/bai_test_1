@@ -12,7 +12,6 @@ _product = ProductDto.product
 @api.route('/')
 class ProductList(Resource):
 
-
     @api.expect(_product, validate=True)
     @api.response(201, 'Product successfully created.')
     @api.doc('create a new product')

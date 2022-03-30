@@ -12,7 +12,7 @@ _cart = CartDto.cart
 
 @api.route('/add')
 class Cart(Resource):
-    @api.doc('list_of_all_products')
+    @api.doc('list_of_all_carts')
     # @admin_token_required
     @api.expect(_cart, validate=True)
     @api.response(201, 'Cart successfully created.')

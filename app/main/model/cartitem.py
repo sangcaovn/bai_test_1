@@ -13,4 +13,4 @@ class CartItem(db.Model):
     total = db.Column(db.Float, default=0)
 
     def __repr__(self):
-        return "<CartItem '{}'>".format(self.cart_item_id)
+        return (self.cart_item_id)
