@@ -18,6 +18,9 @@ class User(db.Model):
     username = db.Column(db.String(50), unique=True)
     password_hash = db.Column(db.String(100))
 
+    # Define relationships
+    cart = db.relationship("Cart", uselist=False, backref="user")
+
     @property
     def password(self):
         raise AttributeError('password: write-only field')

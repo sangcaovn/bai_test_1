@@ -16,6 +16,9 @@ class Auth:
                     response_object = {
                         'status': 'success',
                         'message': 'Successfully logged in.',
+                        'id': user.id,
+                        'email': user.email,
+                        'username': user.username,
                         'Authorization': auth_token.decode()
                     }
                     return response_object, 200
