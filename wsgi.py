@@ -6,7 +6,7 @@ from flask_script import Manager
 
 from app import blueprint
 from app.main import create_app, db
-from app.main.model import user, blacklist, cart
+from app.main.model import user, blacklist, cart, cart_item
 
 app = create_app('dev')
 app.register_blueprint(blueprint)
