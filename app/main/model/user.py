@@ -4,12 +4,14 @@ import datetime
 from app.main.model.blacklist import BlacklistToken
 from ..config import key
 import jwt
+import uuid
 
 
 class User(db.Model):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.String(100), unique=True, default=lambda: uuid.uuid4())
     email = db.Column(db.String(255), unique=True, nullable=False)
     registered_on = db.Column(db.DateTime, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)

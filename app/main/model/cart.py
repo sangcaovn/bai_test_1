@@ -8,8 +8,7 @@ class Cart(db.Model):
 
     cart_id = db.Column(db.String(100), unique=True, default=lambda: uuid.uuid4())
     order_id = db.Column(db.String(100), unique=True, default=None)
-    user_id = db.Column(db.String(100), unique=True, default=lambda: uuid.uuid4())
-    product_id = db.Column(db.String(100), nullable=True)
+    user_id = db.Column(db.String(100), unique=True)
     quantity = db.Column(db.Integer, nullable=True)
     cart_items = db.relationship('CartItem', backref='cart', lazy='dynamic')
     subtotal_ex_tax=db.Column(db.Float, nullable=True)
@@ -17,3 +16,13 @@ class Cart(db.Model):
     total=db.Column(db.Float, nullable=True)
 
     payment_status=db.Column(db.String(100), nullable=True)
+
+
+    def __init__(self, data):
+        self.cart_id = data.get("cart_id")
+        self.order_id = data.get("order_id")
+        self.user_id = data.get("user_id")
+        self.quantity = data.get("quantity")
+        self.subtotal_ex_tax = data.get("subtotal_ex_tax")
+        self.tax_total = data.get("tax_total")
+        self.total = data.get("total")

@@ -7,7 +7,7 @@ class CartItem(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     
     cart_item_id = db.Column(db.String(100), unique=True, default=lambda: uuid.uuid4())
-    product_id = db.Column(db.String(100), unique=True, default=lambda: uuid.uuid4())
+    product_id = db.Column(db.String(100), unique=True)
 
     quantity = db.Column(db.Integer, nullable=False)
     subtotal_ex_tax=db.Column(db.Float, nullable=True)
