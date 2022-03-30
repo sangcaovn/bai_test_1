@@ -1,4 +1,3 @@
-import json
 import uuid
 from typing import Dict
 
@@ -18,9 +17,6 @@ def create_a_cart(user_id, data: Dict[str, str]):
         save_changes(new_cart)
 
         data_cartitem = create_a_cart_item(new_cart.cart_id, data)
-
-        print(data_cartitem[0][data])
-
         response_object = {
             'status': 'success',
             'message': 'Successfully created.',
@@ -39,12 +35,17 @@ def create_a_cart(user_id, data: Dict[str, str]):
         return response_object, 409
 
 
-def checkout(cart_id: str):
-    cart = Cart.query.filter_by(cart_id=cart_id)
-    order = Order
-
-
-
 def save_changes(data: Cart):
     db.session.add(data)
     db.session.commit()
+
+
+def db_delete(data: Cart):
+    db.session.delete(data)
+    db.session.commit()
+
+
+def checkout(cart: Cart):
+    order = cart.to_order()
+    db_delete(cart)
+    save_changes(order)

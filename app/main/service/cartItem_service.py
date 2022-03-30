@@ -28,7 +28,7 @@ def create_a_cart_item(cart_id, data: Dict[str, str]):
                 'status': 'success',
                 'message': 'Successfully created.',
                 'data': {
-                    "cartItem_id": new_cartItem.cartItem_id,
+                    "cartItem_id": new_cartItem.cart_item_id,
                     "cart_id": new_cartItem.cart_id,
                     "quantity": new_cartItem.quantity,
                     "product_id": new_cartItem.product_id,

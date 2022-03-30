@@ -1,6 +1,7 @@
 from sqlalchemy.ext.declarative.base import declared_attr
+from sqlalchemy.orm import relationship
 
-from .. import db
+from .. import db, generate_uuid
 
 
 class SharedFieldModel(object):
@@ -15,20 +16,30 @@ class SharedFieldModel(object):
 
 
 class CartItem(SharedFieldModel, db.Model):
-    __tablename__ = 'cartitem'
+    __tablename__ = 'cart_item'
 
     cart_item_id = db.Column(db.String(100), primary_key=True)
-    cart_id = db.Column(db.String(100), db.ForeignKey('cart.cart_id'))
+    cart_id = db.Column(db.String(100), db.ForeignKey('cart.cart_id', ondelete="CASCADE"))
 
-    def __repr__(self):
-        return "<Cart '{}'>".format(self.cart_id)
+    cart = relationship("Cart", back_populates="cart_items")
+
+    def to_order_item(self, order_id):
+        return OrderItem(
+            quantity=self.quantity,
+            subtotal_ex_tax=self.subtotal_ex_tax,
+            tax_total=self.tax_total,
+            total=self.total,
+            order_id=order_id
+        )
 
 
 class OrderItem(SharedFieldModel, db.Model):
     __tablename__ = 'orderitem'
 
-    order_item_id = db.Column(db.String(100), primary_key=True)
-    order_id = db.Column(db.String(100), db.ForeignKey('order.order_id'))
+    order_item_id = db.Column(db.String(100), primary_key=True, default=generate_uuid)
+    order_id = db.Column(db.String(100), db.ForeignKey('order.order_id', ondelete="CASCADE"))
+
+    order = relationship("Order", back_populates="order_items")
 
     def __repr__(self):
         return "<Order '{}'>".format(self.order_id)

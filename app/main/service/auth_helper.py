@@ -87,3 +87,24 @@ class Auth:
                 'message': 'Provide a valid auth token.'
             }
             return response_object, 401
+
+    @staticmethod
+    def get_logged_in_user_1(new_request):
+        # get the auth token
+        auth_token = new_request.headers.get('Authorization')
+        if auth_token:
+            resp = User.decode_auth_token(auth_token)
+            if not isinstance(resp, int):
+                return User.query.filter_by(public_id=resp).first(), 200
+
+            response_object = {
+                'status': 'fail',
+                'message': resp
+            }
+            return response_object, 401
+        else:
+            response_object = {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }
+            return response_object, 401

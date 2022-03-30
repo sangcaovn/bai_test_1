@@ -1,12 +1,17 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from uuid import uuid4
+
+from flask.app import Flask
 from flask_bcrypt import Bcrypt
+from flask_sqlalchemy import SQLAlchemy
 
 from .config import config_by_name
-from flask.app import Flask
 
 db = SQLAlchemy()
 flask_bcrypt = Bcrypt()
+
+
+def generate_uuid():
+    return str(uuid4())
 
 
 def create_app(config_name: str):

@@ -1,8 +1,8 @@
-from enum import unique
-
+from sqlalchemy import select
 from sqlalchemy.ext.declarative.base import declared_attr
+from sqlalchemy.orm import relationship
 
-from .. import db
+from .. import db, generate_uuid
 
 
 class SharedFieldModel(object):
@@ -20,17 +20,32 @@ class Cart(SharedFieldModel, db.Model):
     __tablename__ = 'cart'
 
     cart_id = db.Column(db.String(100), primary_key=True)
-    cart_items = db.relationship('CartItem', backref='cart', lazy='dynamic')
+    cart_items = relationship("CartItem", back_populates="cart")
 
     def __repr__(self):
-        return f"<{self.__name__} '{self.cart_id}'>"
+        return f"<{self.__class__.__name__} '{self.cart_id}'>"
+
+    @classmethod
+    def get_cart_by_user_id(cls, user_id: str):
+        db_response = cls.query.filter_by(user_id=user_id).first()
+        return db_response
+
+    def to_order(self):
+        order = Order(
+            quantity=self.quantity,
+            subtotal_ex_tax=self.subtotal_ex_tax,
+            tax_total=self.tax_total,
+            total=self.total,
+        )
+        order.order_items = [cart_item.to_order_item(order.order_id) for cart_item in self.cart_items]
+        return order
 
 
 class Order(SharedFieldModel, db.Model):
     __tablename__ = 'order'
 
-    order_id = db.Column(db.String(100), primary_key=True)
-    order_items = db.relationship('OrderItem', backref='order', lazy='dynamic')
+    order_id = db.Column(db.String(100), primary_key=True, default=generate_uuid)
+    order_items = db.relationship('OrderItem', back_populates='order', lazy='dynamic')
 
     def __repr__(self):
-        return f"<{self.__name__} '{self.order_id}'>"
+        return f"<{self.__class__.__name__} '{self.order_id}'>"

@@ -35,6 +35,6 @@ class CartDto:
         'quantity': fields.String(description='The cart quantity'),
         'product_id': fields.String(description='The product id'),
     })
-    cart_checkout = api.model('cart', {
+    cart_checkout = api.model('cart_checkout', {
         'cart_id': fields.String()
     })

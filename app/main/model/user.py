@@ -1,10 +1,11 @@
-import string
-from .. import db, flask_bcrypt
 import datetime
-from app.main.model.blacklist import BlacklistToken
-from ..config import key
+
 import jwt
-from typing import Union
+from sqlalchemy.dialects.postgresql import UUID
+
+from app.main.model.blacklist import BlacklistToken
+from .. import db, flask_bcrypt
+from ..config import key
 
 
 class User(db.Model):
