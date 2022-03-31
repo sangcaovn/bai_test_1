@@ -16,11 +16,10 @@ cart_item_schema=CartItemSchema(many=True)
 def response_data(user_uuid, payment_status=None):
     cart= Cart.query.filter_by(user_uuid=user_uuid)
     if payment_status:
-        cart=cart.filter_by(type=TypeEnum.Order).first()
+        cart=cart.filter_by(type=TypeEnum.Order.value).first()
     else:
         cart=cart.first()
     obj= {
-            "cart_id": cart.cart_uuid,
             "userId": cart.user_uuid,
             "cart_items": None,
             "subtotal_ex_tax": 0,
@@ -33,13 +32,18 @@ def response_data(user_uuid, payment_status=None):
     obj["total"]=sum(row.total for row in cart.cart_items)
     obj["cart_items"]=json.loads(cart_item_schema.dumps(cart.cart_items))
     if payment_status:
+        obj["order_id"]=cart.cart_uuid
         obj["payment_status"]=payment_status
+    else:
+        obj["cart_id"]=cart.cart_uuid
     return obj
 
 def save_new_cart(data):
     user_uuid=Auth.get_cart_from_user_id(request)
     if user_uuid:
-        cart_data=Cart.query.filter_by(user_uuid=user_uuid).first()
+        cart_data=Cart.query \
+            .filter_by(type=TypeEnum.Cart.value) \
+            .filter_by(user_uuid=user_uuid).first()
         product=Product.get_product_by_uuid(data.get("productId"))
         if not product: 
             return {"message":"could not found product with input id!!!"}, 403
@@ -110,7 +114,9 @@ def change_cart_quantity(cart_item_id,data):
     if not user_uuid:
         return {"message":"Bad request!!!"}, 403
 
-    cart_item=CartItem.query.filter_by(cart_item_uuid=cart_item_id).first()
+    cart_item=CartItem.query \
+        .filter_by(type=TypeEnum.CartItem.value) \
+        .filter_by(cart_item_uuid=cart_item_id).first()
     if cart_item:
         product=Product.query.filter_by(product_uuid=cart_item.product_uuid).first()
         if not product:
@@ -135,7 +141,9 @@ def change_cart_quantity(cart_item_id,data):
 def checkout_cart():
     user_uuid=Auth.get_cart_from_user_id(request)
     if user_uuid:
-        cart_data=Cart.query.filter_by(user_uuid=user_uuid).first()
+        cart_data=Cart.query \
+            .filter_by(type=TypeEnum.Cart.value) \
+            .filter_by(user_uuid=user_uuid).first()
         if cart_data:
             cart_data.type=TypeEnum.Order.value
             cart_data.payment_status="INIT"
@@ -152,7 +160,9 @@ def checkout_cart():
 def delete_cart_item(cart_item_uuid):
     user_uuid=Auth.get_cart_from_user_id(request)
     if user_uuid:
-        cart_item=CartItem.query.filter_by(cart_item_uuid=cart_item_uuid).first()
+        cart_item=CartItem.query \
+            .filter_by(type=TypeEnum.CartItem.value) \
+            .filter_by(cart_item_uuid=cart_item_uuid).first()
         db.session.delete(cart_item)
         
         db.session.commit()
