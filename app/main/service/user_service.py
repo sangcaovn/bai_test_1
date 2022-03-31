@@ -37,7 +37,7 @@ def get_a_user(public_id):
 def generate_token(user: User):
     try:
         # generate the auth token
-        auth_token = User.encode_auth_token(user.id)
+        auth_token = User.encode_auth_token(user.public_id)
         response_object = {
             'status': 'success',
             'message': 'Successfully registered.',
@@ -55,4 +55,3 @@ def generate_token(user: User):
 def save_changes(data: User):
     db.session.add(data)
     db.session.commit()
-

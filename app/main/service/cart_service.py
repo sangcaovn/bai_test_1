@@ -118,7 +118,7 @@ def delete_cart_item(cart_item_uuid):
         if cart_data:
             cart_item=CartItem.query.filter_by(cart_item_uuid=cart_item_uuid).first()
             db.session.delete(cart_item)
-            
+
             db.session.commit()
 
             # return data as required

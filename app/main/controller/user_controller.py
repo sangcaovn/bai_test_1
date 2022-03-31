@@ -40,6 +40,3 @@ class User(Resource):
             api.abort(404)
         else:
             return user
-
-
-

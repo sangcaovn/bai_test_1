@@ -9,13 +9,12 @@ from typing import Callable
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        data, status = Auth.get_logged_in_user_1(request)
 
-        data, status = Auth.get_logged_in_user(request)
-        token = data.get('data')
-
-        if not token:
+        if isinstance(data, str) and status != 200:
             return data, status
 
+        kwargs["current_user"] = data
         return f(*args, **kwargs)
 
     return decorated

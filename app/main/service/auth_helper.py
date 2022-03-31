@@ -11,7 +11,7 @@ class Auth:
             # fetch the user data
             user = User.query.filter_by(email=data.get('email')).first()
             if user and user.check_password(data.get('password')):
-                auth_token = User.encode_auth_token(user.user_id)
+                auth_token = User.encode_auth_token(user.id)
                 if auth_token:
                     response_object = {
                         'status': 'success',
@@ -65,7 +65,7 @@ class Auth:
         if auth_token:
             resp = User.decode_auth_token(auth_token)
             if not isinstance(resp, str):
-                user = User.query.filter_by(user_id=resp).first()
+                user = User.query.filter_by(id=resp).first()
                 response_object = {
                     'status': 'success',
                     'data': {
@@ -94,5 +94,26 @@ class Auth:
         auth_token = new_request.headers.get('Authorization')
         if auth_token:
             return User.decode_auth_token(auth_token)
-        
+
         return None
+
+    @staticmethod
+    def get_logged_in_user_1(new_request):
+        # get the auth token
+        auth_token = new_request.headers.get('Authorization')
+        if auth_token:
+            resp = User.decode_auth_token(auth_token)
+            if not isinstance(resp, int):
+                return User.query.filter_by(public_id=resp).first(), 200
+
+            response_object = {
+                'status': 'fail',
+                'message': resp
+            }
+            return response_object, 401
+        else:
+            response_object = {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }
+            return response_object, 401

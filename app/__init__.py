@@ -1,7 +1,6 @@
 from flask_restx import Api
 from flask import Blueprint
 
-# from .main.controller.user_controller import api as user_ns
 from .main.controller.auth_controller import api as auth_ctl
 from .main.controller.cart_controller import api as cart_ctl
 from .main.controller.cart_item_controller import api as cart_item_ctl

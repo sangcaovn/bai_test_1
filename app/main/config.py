@@ -13,13 +13,12 @@ class Config:
     RESTX_MASK_SWAGGER = False
 
 
-
 class DevelopmentConfig(Config):
     # uncomment the line below to use postgres
     # SQLALCHEMY_DATABASE_URI = postgres_local_base
     DEBUG = True
     # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'flask_boilerplate_main.db')
-    SQLALCHEMY_DATABASE_URI = "postgresql://admin:admin@localhost:5432/test1_db"
+    SQLALCHEMY_DATABASE_URI = "postgresql://hocvien_dev:123456@localhost:5432/test_db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
@@ -27,7 +26,7 @@ class TestingConfig(Config):
     DEBUG = True
     TESTING = True
     # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'flask_boilerplate_test.db')
-    SQLALCHEMY_DATABASE_URI = "postgresql://admin:admin@localhost:5432/test1_db"
+    SQLALCHEMY_DATABASE_URI = "postgresql://admin:admin@localhost:5432/Exe1"
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
