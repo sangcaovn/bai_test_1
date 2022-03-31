@@ -1,20 +1,14 @@
-from .. import db
-import uuid
+from .. import db, generate_uuid
+
 
 class Product(db.Model):
     __tablename__ = 'product'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    product_uuid = db.Column(db.String(100), unique=True, default=lambda: uuid.uuid4())
+    id = db.Column(db.String(100), primary_key=True, default=generate_uuid)
     name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=True)
 
-    cart = db.relationship("Product", back_populates="cart_item")
-
-    def __init__(self, data):
-        self.name = data.get("name")
-        self.price = data.get("price")
-        self.product_uuid = data.get("product_uuid")
+    cart_item = db.relationship("Product", back_populates="cart_item")
 
     def __repr__(self):
-        return '<Product: {}'.format(self.name)
+        return f'<Product: {self.name}>'

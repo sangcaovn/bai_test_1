@@ -3,7 +3,7 @@ import uuid
 from typing import Dict
 
 from app.main import db
-from app.main.model.cartItem import CartItem
+from app.main.model.cart_item import CartItem
 from app.main.model.product import Product
 
 
