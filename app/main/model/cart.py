@@ -10,10 +10,6 @@ class Cart(db.Model):
     update_at = db.Column(db.DateTime, nullable=False)
     cart_uuid = db.Column(db.String(100), unique=True, default=lambda: uuid.uuid4())
 
-    # subtotal_ex_tax = db.Column(db.Float, nullable = False)
-    # tax_total = db.Column(db.Float, nullable = False)
-    # total = db.Column(db.Float, nullable = False)
-
     # Define relationships
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     cart_items = db.relationship("CartItem")

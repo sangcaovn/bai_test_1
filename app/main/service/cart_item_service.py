@@ -1,15 +1,15 @@
-import json
 from app.main import db
-from flask import jsonify
+from flask import request
 from app.main.enum.type_enum import TypeEnum
 from app.main.model.cart import Cart
 from app.main.model.cart_item import CartItem
-import datetime
 from typing import Dict
 import uuid
 
 from app.main.model.cart_item import CartItem
 from app.main.model.product import Product
+from app.main.model.user import User
+from app.main.service.auth_helper import Auth
 
 def get_cart_item(cart_item_id: str):
     return CartItem.query.filter_by(id=cart_item_id).first()
@@ -91,11 +91,17 @@ def filter_multiple_fields(cart_id, product_id):
     return cart_items
 
 def update_quantity(cart_item_id, data):
+    user_id = Auth.get_cart_from_user_id(request)
+    user = User.query.filter_by(id=user_id).first()
+    cart = Cart.query.filter_by(user_id = user_id).first()
     new_quantity = data['quantity']
     existed_cart_item = CartItem.query.filter_by(id = cart_item_id).first()
     if not existed_cart_item:
         return "Cart item not found", 404
     
+    if existed_cart_item.type == TypeEnum.OrderDetail.value:
+        return "Not allow to update order detail", 403
+
     product_id = existed_cart_item.product_id
     product = Product.query.filter_by(public_id=product_id).first()
     price = product.price
@@ -107,7 +113,36 @@ def update_quantity(cart_item_id, data):
 
     update_change_quantity_taxes(cart_item_id, new_quantity, subtotal_ex_tax, tax_total, total)
 
-    return "success", 200
+    # Re-query to get cart and cart items
+    cart_items = CartItem.query.filter_by(cart_id = existed_cart_item.cart_id).all()
+    cart_items_list_json = []
+    cart_subtotal_ex_tax = 0
+    cart_tax_total = 0
+    cart_total = 0
+
+    for item in cart_items:
+        info = {}
+        info['cart_item_id'] = item.id
+        info['product_id'] = item.product_id
+        info['quantity'] = item.quantity
+        info['subtotal_ex_tax'] = item.subtotal_ex_tax
+        info['tax_total'] = item.tax_total
+        info['total'] = item.total
+        cart_items_list_json.append(info)
+        cart_subtotal_ex_tax += item.subtotal_ex_tax
+        cart_tax_total += item.tax_total
+        cart_total += item.total
+    
+    response_object = {
+        "cart_id": f"{cart.cart_uuid}",
+        "user_id": f"{user.public_id}",
+        "cart_items": cart_items_list_json,
+        "subtotal_ex_tax": cart_subtotal_ex_tax,
+        "tax_total": cart_tax_total,
+        "total": cart_total
+    }
+
+    return response_object, 200
 
 def save_changes(cart_item: CartItem):
     db.session.add(cart_item)
@@ -137,10 +172,47 @@ def update_change_quantity_taxes(cart_item_id, new_quantity, subtotal_ex_tax, ta
     db.session.commit()
 
 def delete_cart_item(cart_item_id):
+    user_id = Auth.get_cart_from_user_id(request)
+    user = User.query.filter_by(id=user_id).first()
+    cart = Cart.query.filter_by(user_id = user_id).first()
+
+    cart_item = CartItem.query.filter_by(id = cart_item_id).first()
+    if cart_item.type == TypeEnum.OrderDetail.value:
+        return 'Not allowed to delete order detail!', 403
+
     CartItem.query.filter_by(id=cart_item_id).delete()
     db.session.commit()
 
-    return 'deleted successfully!', 200
+    # Re-query to get cart and cart items
+    cart_items = CartItem.query.filter_by(cart_id = cart_item.cart_id).all()
+    cart_items_list_json = []
+    cart_subtotal_ex_tax = 0
+    cart_tax_total = 0
+    cart_total = 0
+
+    for item in cart_items:
+        info = {}
+        info['cart_item_id'] = item.id
+        info['product_id'] = item.product_id
+        info['quantity'] = item.quantity
+        info['subtotal_ex_tax'] = item.subtotal_ex_tax
+        info['tax_total'] = item.tax_total
+        info['total'] = item.total
+        cart_items_list_json.append(info)
+        cart_subtotal_ex_tax += item.subtotal_ex_tax
+        cart_tax_total += item.tax_total
+        cart_total += item.total
+    
+    response_object = {
+        "cart_id": f"{cart.cart_uuid}",
+        "user_id": f"{user.public_id}",
+        "cart_items": cart_items_list_json,
+        "subtotal_ex_tax": cart_subtotal_ex_tax,
+        "tax_total": cart_tax_total,
+        "total": cart_total
+    }
+
+    return response_object, 200
 
 def change_type_after_checking_out(cart_id: int):
     cart_items = CartItem.query.filter_by(cart_id = cart_id).all()
