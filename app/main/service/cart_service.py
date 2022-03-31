@@ -171,9 +171,9 @@ def checkout_cart(data):
     if auth_token:
         user_id = User.decode_auth_token(auth_token)
     cart = Cart.query.filter_by(user_id=user_id).first()
-    list_cart_item = CartItem.query.filter_by(cart_id=cart.cart_id).all()
 
     if cart:
+        list_cart_item = CartItem.query.filter_by(cart_id=cart.cart_id).all()
         add_new_order(
             order_id = cart.cart_id,
             user_id = cart.user_id,
@@ -233,7 +233,14 @@ def checkout_cart(data):
         db.session.commit()
 
         return response_object, 200
-    
+
+    else:
+        response_object = {
+            'status': 'fail',
+            'message': 'cart does not exist.',
+        }
+
+        return response_object, 403
 
         
 

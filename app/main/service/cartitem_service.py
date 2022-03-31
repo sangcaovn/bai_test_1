@@ -141,6 +141,11 @@ def delete_cart_item(cart_item_id):
             'message': 'delete cart item successfully.',
         }
 
+        cart_item = CartItem.query.filter_by(cart_id=cart.cart_id).first()   
+        if not cart_item:
+            db.session.delete(cart)
+            db.session.commit()
+
         return response_object, 200
 
 
