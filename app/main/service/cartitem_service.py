@@ -37,7 +37,7 @@ def add_new_cart_item(cart_id, data: Dict[str, str]):
                 "total": new_card_item.total
             }
         }
-    return response_object, 201
+    return response_object, 200
 
 def change_quantity(data: Dict[str, str], cart_item_id):
     cart_item = CartItem.query.filter_by(cart_item_id=cart_item_id).first()   
@@ -46,7 +46,7 @@ def change_quantity(data: Dict[str, str], cart_item_id):
             'status': 'fail',
             'message': 'Cart item name does not exists.',
         }
-        return response_object, 409    
+        return response_object, 403
     else:
         product = Product.query.filter_by(product_id=cart_item.product_id).first()
         cart_item.quantity = data['quantity']

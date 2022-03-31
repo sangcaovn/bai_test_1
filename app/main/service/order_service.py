@@ -1,9 +1,10 @@
 from app.main import db
+from app.main.model.cart import Cart
 from app.main.model.product import Product
 from app.main.model.order import Order
 
 def add_new_order(order_id, user_id, quantity, subtotal_ex_tax, tax_total, total):
-    order = Order.query.filter_by(user_id=user_id).first()
+    order = Order.query.filter_by(order_id=order_id).first()
     if not order:
         new_order = Order(
             order_id = order_id,

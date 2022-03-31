@@ -2,6 +2,8 @@ import uuid
 from flask import request
 from app.main import db
 from app.main.model.cart import Cart
+from app.main.model.order import Order
+from app.main.model.orderitem import OrderItem
 from typing import Dict
 from app.main.model.cartitem import CartItem
 from app.main.service.auth_helper import Auth
@@ -191,14 +193,45 @@ def checkout_cart(data):
                 tax_total = cart_item.tax_total,
                 total = cart_item.total
             )
+        
+
+
+        order = Order.query.filter_by(order_id=cart.cart_id).first()
+        all_order_item = OrderItem.query.filter_by(order_id=order.order_id).all()
+        list_order_item = []
+        for order_item in all_order_item:
+            order_item_dict = {
+                "order_id": order_item.order_id,
+                "product_id": order_item.product_id,
+                "quantity": order_item.quantity,
+                "subtotal_ex_tax": order_item.subtotal_ex_tax,
+                "tax_total": order_item.tax_total,
+                "total": order_item.total
+            }
+            list_order_item.append(order_item_dict)
+
+        response_object = {
+                'status': 'success',
+                'message': 'successfully checkout cart.',
+                'order': {
+                    'order_id': order.order_id,
+                    'user_id': order.user_id,
+                    'quantity': order.quantity,
+                    'order_item': list_order_item,
+                    'subtotal_ex_tax': order.subtotal_ex_tax,
+                    'tax_total': order.tax_total,
+                    'total': order.total,
+                    'payment_status': order.payment_status
+                }
+            }
+        print(response_object)
+
+        for cart_item in list_cart_item:
             delete_cart_item(cart_item.cart_item_id)
 
         db.session.delete(cart)
         db.session.commit()
-        response_object = {
-                'status': 'success',
-                'message': 'successfully checkout cart.'
-            }
+
         return response_object, 200
     
 

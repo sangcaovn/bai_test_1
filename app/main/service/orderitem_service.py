@@ -3,7 +3,7 @@ from app.main.model.product import Product
 from app.main.model.orderitem import OrderItem
 
 def add_new_order_item(order_item_id, order_id, product_id, quantity, subtotal_ex_tax, tax_total, total):
-    orderitem = OrderItem.query.filter_by(product_id=product_id).first()
+    orderitem = OrderItem.query.filter_by(order_item_id=order_item_id).first()
     if not orderitem:
         new_order_item = OrderItem(
             order_item_id = order_item_id,
@@ -32,9 +32,9 @@ def add_new_order_item(order_item_id, order_id, product_id, quantity, subtotal_e
     else:
         response_object = {
             'status': 'fail',
-            'message': 'Product name already exists.',
+            'message': 'Order already exists.',
         }
-        return response_object, 409
+        return response_object, 403
 
 def save_changes(data: OrderItem):
     db.session.add(data)
