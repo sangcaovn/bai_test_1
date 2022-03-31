@@ -1,4 +1,5 @@
 
+import json
 import uuid
 from app.main import db
 from flask import request, jsonify
@@ -9,10 +10,59 @@ from app.main.model.cart import Cart
 from app.main.model.product import Product
 from app.main.service.auth_helper import Auth
 
-def get_cart_by_user_id(user_uuid):
+def obj_to_json(lst_obj):
+    objs = []
+    for obj in lst_obj:
+        objs.append(json.dumps(obj))
+    return objs
+
+def response_add_cart(user_uuid):
+    cart= Cart.query.filter_by(user_uuid=user_uuid).first()
+    # print ("json data: ",obj_to_json(cart.cart_items))
+    return {
+            "cart_id": cart.cart_uuid,
+            "userId": cart.user_uuid,
+            "cart_items": [
+                {
+                    "cart_item_id": "string",
+                    "product_id": "518e8af7-6617-42a3-a227-b9be1b70fec8",
+                    "quantity": 3,
+                    "subtotal_ex_tax": 0,
+                    "tax_total": 0,
+                    "total": 0
+                }
+            ],
+            "subtotal_ex_tax": 0,
+            "tax_total": 0,
+            "total": 0
+            }
+
+def response_change_cart_qty(user_uuid):
     cart= Cart.query.filter_by(user_uuid=user_uuid).first()
 
-    return {"order_id": "string",
+    return {
+            "cart_id": "string",
+            "userId": "string",
+            "cart_items": [
+                {
+                "cart_item_id": "string",
+                "product_id": "518e8af7-6617-42a3-a227-b9be1b70fec8",
+                "quantity": 3,
+                "subtotal_ex_tax": 0,
+                "tax_total": 0,
+                "total": 0
+                }
+            ],
+            "subtotal_ex_tax": 0,
+            "tax_total": 0,
+            "total": 0
+            },200
+
+def response_checkout_cart(user_uuid):
+    cart= Cart.query.filter_by(user_uuid=user_uuid).first()
+
+    return {
+            "order_id": "string",
             "userId": "string",
             "cart_items": [
                 {
@@ -27,7 +77,29 @@ def get_cart_by_user_id(user_uuid):
             "subtotal_ex_tax": 0,
             "tax_total": 0,
             "total": 0,
-            "payment_status": "string"},200
+            "payment_status": "string"
+            },200
+
+def response_delete_cart_item(user_uuid):
+    cart= Cart.query.filter_by(user_uuid=user_uuid).first()
+
+    return {
+            "cart_id": "string",
+            "userId": "string",
+            "cart_items": [
+                {
+                "cart_item_id": "string",
+                "product_id": "518e8af7-6617-42a3-a227-b9be1b70fec8",
+                "quantity": 3,
+                "subtotal_ex_tax": 0,
+                "tax_total": 0,
+                "total": 0
+                }
+            ],
+            "subtotal_ex_tax": 0,
+            "tax_total": 0,
+            "total": 0
+            },200
 
 def save_new_cart(data):
     user_uuid=Auth.get_cart_from_user_id(request)
@@ -73,7 +145,7 @@ def save_new_cart(data):
             db.session.commit()
 
             # return data as required
-            return get_cart_by_user_id(user_uuid), 200
+            return response_add_cart(user_uuid), 200
         else:
             cart_data=Cart()
             cart_data.cart_uuid=uuid.uuid4()
@@ -94,7 +166,7 @@ def save_new_cart(data):
             save_changes(cart_data)
 
             # return data as required
-            return jsonify(get_cart_by_user_id(user_uuid)), 200
+            return jsonify(response_add_cart(user_uuid)), 200
 
     return {"message":"Bad request!!!"}, 403
 
@@ -124,7 +196,7 @@ def change_cart_quantity(cart_item_id,data):
                 db.session.commit()
 
                 # return data as required
-                return jsonify(get_cart_by_user_id(user_uuid)), 200
+                return jsonify(response_change_cart_qty(user_uuid)), 200
 
     return {"message":"Bad request!!!"}, 403
 
@@ -142,9 +214,8 @@ def checkout_cart():
             db.session.commit()
 
             # return data as required
-            return jsonify(get_cart_by_user_id(user_uuid)), 200
+            return jsonify(response_checkout_cart(user_uuid)), 200
     return {"message":"Bad request!!!"}, 403
-
 
 def delete_cart_item(cart_item_uuid):
     user_uuid=Auth.get_cart_from_user_id(request)
@@ -157,7 +228,7 @@ def delete_cart_item(cart_item_uuid):
             db.session.commit()
 
             # return data as required
-            return jsonify(get_cart_by_user_id(user_uuid)), 200
+            return jsonify(response_delete_cart_item(user_uuid)), 200
 
     return {"message":"Bad request!!!"}, 403
 
