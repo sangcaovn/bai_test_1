@@ -5,22 +5,16 @@ from typing import Dict
 
 
 def save_new_product(data: Dict[str, str]):
-    product = Product.query.filter_by(id=data['product_id']).first()
+    product = Product.query.filter_by(name=data['name']).first()
     if not product:
         new_product = Product(
-            product_id=data['product_id'],
             name=data['name'],
-            price=data['price'],
-            description=data['description']
+            price=data['price']
         )
         save_changes(new_product)
-        return new_product
+        return "Done",201
     else:
-        response_object = {
-            'status': 'fail',
-            'message': 'Product already exists. Please Log in.',
-        }
-        return response_object, 409
+        return "False", 409
 
 
 def get_all_products():
@@ -28,7 +22,7 @@ def get_all_products():
 
 
 def get_a_product(id):
-    return Product.query.filter_by(product_id=id).first()
+    return Product.query.filter_by(id=id).first()
 
 
 def save_changes(data: Product):

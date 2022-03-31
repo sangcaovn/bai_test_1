@@ -5,15 +5,14 @@ from typing import Dict
 
 
 def save_new_order(data: Dict[str, str]):
-    order = Order.query.filter_by(order_id=data['order_id']).first()
+    order = Order.query.filter_by(order_cart=data['order_cart']).first()
     if not order:
         new_order = Order(
-            order_id=data['order_id'],
             order_cart=data['order_cart'],
             description=data['description']
         )
         save_changes(new_order)
-        return new_order
+        return "ok!", 201
     else:
         response_object = {
             'status': 'fail',
@@ -27,7 +26,7 @@ def get_all_orders():
 
 
 def get_a_order(id):
-    return Order.query.filter_by(order_id=id).first()
+    return Order.query.filter_by(id=id).first()
 
 
 def save_changes(data: Order):

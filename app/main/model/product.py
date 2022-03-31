@@ -1,14 +1,12 @@
 from .. import db
+import uuid
 
 class Product(db.Model):
+    __tablename__ = "product"
 
-    __tablename__ = 'product'
-
-    # product_id = db.Column(db.Integer, db.ForeignKey('cart.id'),primary_key=True)
-    product_id = db.Column(db.Integer,primary_key=True)
-    name = db.Column(db.String(60),unique=True)
+    id = db.Column(db.String(60), primary_key=True, default=lambda:uuid.uuid4())
+    name = db.Column(db.String(200), unique=True, nullable=False)
     price = db.Column(db.Integer)
-    description = db.Column(db.Text)
 
-    def __repr__():
-        return "Product"
+    def __repr__(self):
+        return "<Product '{}'>".format(self.name)
