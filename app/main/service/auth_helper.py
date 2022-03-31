@@ -41,7 +41,6 @@ class Auth:
         if auth_token:
             resp = User.decode_auth_token(auth_token)
             if resp:
-                print ("resp>>>>>>>>>>",resp)
                 user = User.query.filter_by(user_uuid=resp).first()
                 response_object = {
                     'status': 'success',

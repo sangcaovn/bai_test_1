@@ -19,7 +19,6 @@ class Cart(Resource):
     def post(self):
         """Creates a new Cart """
         data = request.json
-        print (">>>>>>>>>>>>",data)
         return save_new_cart(data=data)
 
 

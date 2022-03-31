@@ -13,8 +13,12 @@ from app.main.service.auth_helper import Auth
 cart_schema=CartSchema()
 cart_item_schema=CartItemSchema(many=True)
 
-def response_add_cart(user_uuid):
-    cart= Cart.query.filter_by(user_uuid=user_uuid).first()
+def response_data(user_uuid, payment_status=None):
+    cart= Cart.query.filter_by(user_uuid=user_uuid)
+    if payment_status:
+        cart=cart.filter_by(type=TypeEnum.Order).first()
+    else:
+        cart=cart.first()
     obj= {
             "cart_id": cart.cart_uuid,
             "userId": cart.user_uuid,
@@ -23,77 +27,14 @@ def response_add_cart(user_uuid):
             "tax_total": 0,
             "total": 0
         }
-        
+
     obj["subtotal_ex_tax"]=sum(row.subtotal_ex_tax for row in cart.cart_items)
     obj["tax_total"]=sum(row.tax_total for row in cart.cart_items)
     obj["total"]=sum(row.total for row in cart.cart_items)
     obj["cart_items"]=json.loads(cart_item_schema.dumps(cart.cart_items))
-
+    if payment_status:
+        obj["payment_status"]=payment_status
     return obj
-
-def response_change_cart_qty(user_uuid):
-    cart= Cart.query.filter_by(user_uuid=user_uuid).first()
-
-    return {
-            "cart_id": "string",
-            "userId": "string",
-            "cart_items": [
-                {
-                "cart_item_id": "string",
-                "product_id": "518e8af7-6617-42a3-a227-b9be1b70fec8",
-                "quantity": 3,
-                "subtotal_ex_tax": 0,
-                "tax_total": 0,
-                "total": 0
-                }
-            ],
-            "subtotal_ex_tax": 0,
-            "tax_total": 0,
-            "total": 0
-            },200
-
-def response_checkout_cart(user_uuid):
-    cart= Cart.query.filter_by(user_uuid=user_uuid).first()
-
-    return {
-            "order_id": "string",
-            "userId": "string",
-            "cart_items": [
-                {
-                "order_item_id": "string",
-                "product_id": "518e8af7-6617-42a3-a227-b9be1b70fec8",
-                "quantity": 3,
-                "subtotal_ex_tax": 0,
-                "tax_total": 0,
-                "total": 0
-                }
-            ],
-            "subtotal_ex_tax": 0,
-            "tax_total": 0,
-            "total": 0,
-            "payment_status": "string"
-            },200
-
-def response_delete_cart_item(user_uuid):
-    cart= Cart.query.filter_by(user_uuid=user_uuid).first()
-
-    return {
-            "cart_id": "string",
-            "userId": "string",
-            "cart_items": [
-                {
-                "cart_item_id": "string",
-                "product_id": "518e8af7-6617-42a3-a227-b9be1b70fec8",
-                "quantity": 3,
-                "subtotal_ex_tax": 0,
-                "tax_total": 0,
-                "total": 0
-                }
-            ],
-            "subtotal_ex_tax": 0,
-            "tax_total": 0,
-            "total": 0
-            },200
 
 def save_new_cart(data):
     user_uuid=Auth.get_cart_from_user_id(request)
@@ -139,7 +80,7 @@ def save_new_cart(data):
             db.session.commit()
 
             # return data as required
-            return response_add_cart(user_uuid), 200
+            return response_data(user_uuid), 200
         else:
             cart_data=Cart()
             cart_data.cart_uuid=uuid.uuid4()
@@ -160,37 +101,34 @@ def save_new_cart(data):
             save_changes(cart_data)
 
             # return data as required
-            return jsonify(response_add_cart(user_uuid)), 200
+            return jsonify(response_data(user_uuid)), 200
 
     return {"message":"Bad request!!!"}, 403
 
 def change_cart_quantity(cart_item_id,data):
     user_uuid=Auth.get_cart_from_user_id(request)
-    if user_uuid:
-        cart_data=Cart.query.filter_by(user_uuid=user_uuid).first()
-        if cart_data:
-            cart_item=CartItem.query.filter_by(cart_item_uuid=cart_item_id).first()
-            if cart_item:
+    if not user_uuid:
+        return {"message":"Bad request!!!"}, 403
 
-                product=Product.query.filter_by(product_uuid=data.get("product_id")).first()
-                # calculate values for cart-item
-                cart_item.quantity += data.get("quantity")
+    cart_item=CartItem.query.filter_by(cart_item_uuid=cart_item_id).first()
+    if cart_item:
+        product=Product.query.filter_by(product_uuid=cart_item.product_uuid).first()
+        if not product:
+            return {"message":"Bad request!!!"}, 403
 
-                cart_item.subtotal_ex_tax=int(data.get("quantity"))
+        # calculate values for cart-item
+        quantity=cart_item.quantity + int(data.get("quantity"))
+        sub_total=quantity*product.price
+        cart_item.subtotal_ex_tax = sub_total
 
-                if product:
-                    cart_item.tax_total=int(data.get("quantity"))*product.price
-                else:
-                    cart_item.tax_total=int(data.get("quantity"))
-                cart_item.total=data.get("quantity")
-                cart_item.quantity=int(data.get("quantity"))
+        tax_total=(sub_total*10)/100
+        cart_item.tax_total =tax_total
 
-                cart_item.save()
+        cart_item.total=sub_total+tax_total
+        db.session.commit()
 
-                db.session.commit()
-
-                # return data as required
-                return jsonify(response_change_cart_qty(user_uuid)), 200
+        # return data as required
+        return jsonify(response_data(user_uuid)), 200
 
     return {"message":"Bad request!!!"}, 403
 
@@ -201,28 +139,26 @@ def checkout_cart():
         if cart_data:
             cart_data.type=TypeEnum.Order.value
             cart_data.payment_status="INIT"
-            cart_data.save()
+            
             for itm in cart_data.cart_items:
                 itm.type=TypeEnum.OrderDetail.value
-                itm.save()
+                
             db.session.commit()
 
             # return data as required
-            return jsonify(response_checkout_cart(user_uuid)), 200
+            return jsonify(response_data(user_uuid,"INIT")), 200
     return {"message":"Bad request!!!"}, 403
 
 def delete_cart_item(cart_item_uuid):
     user_uuid=Auth.get_cart_from_user_id(request)
     if user_uuid:
-        cart_data=Cart.query.filter_by(user_uuid=user_uuid).first()
-        if cart_data:
-            cart_item=CartItem.query.filter_by(cart_item_uuid=cart_item_uuid).first()
-            db.session.delete(cart_item)
-            
-            db.session.commit()
+        cart_item=CartItem.query.filter_by(cart_item_uuid=cart_item_uuid).first()
+        db.session.delete(cart_item)
+        
+        db.session.commit()
 
-            # return data as required
-            return jsonify(response_delete_cart_item(user_uuid)), 200
+        # return data as required
+        return jsonify(response_data(user_uuid)), 200
 
     return {"message":"Bad request!!!"}, 403
 
