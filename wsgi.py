@@ -1,6 +1,3 @@
-# import os
-# import unittest
-
 from flask_migrate import Migrate
 from flask_script import Manager
 
@@ -36,4 +33,4 @@ migrate = Migrate(app, db)
 
 
 if __name__ == '__main__':
-    manager.run()
+    app.run()

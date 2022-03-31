@@ -103,8 +103,12 @@ class Auth:
         auth_token = new_request.headers.get('Authorization')
         if auth_token:
             resp = User.decode_auth_token(auth_token)
-            if not isinstance(resp, int):
-                return User.query.filter_by(public_id=resp).first(), 200
+            if isinstance(resp, str):
+                user = User.query.filter_by(id=resp).first(), 200
+                if not user:
+                    resp = 'User does not exist'
+                else:
+                    return user
 
             response_object = {
                 'status': 'fail',

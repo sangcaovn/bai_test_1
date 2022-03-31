@@ -6,15 +6,14 @@ class UserDto:
     user = api.model('user', {
         'email': fields.String(required=True, description='user email address'),
         'username': fields.String(required=True, description='user username'),
-        'password': fields.String(required=True, description='user password'),
-        'user_id': fields.String(description='user Identifier')
+        'password': fields.String(required=True, description='user password')
     })
 
 
 class CartDto:
     api = Namespace('cart', description='post new cart')
     cart = api.model('cart', {
-        'productId': fields.String(required=True, description='productId'),
+        'product_id': fields.String(required=True, description='productId'),
         'quantity': fields.Integer(required=True, description='quantity'),
     })
 
@@ -43,12 +42,12 @@ class ProductDto:
     })
 
 
-class CartDto:
-    api = Namespace('cart', description='cart related operations')
-    cart = api.model('cart', {
-        'quantity': fields.String(description='The cart quantity'),
-        'product_id': fields.String(description='The product id'),
-    })
-    cart_checkout = api.model('cart_checkout', {
-        'cart_id': fields.String()
-    })
+# class CartDto:
+#     api = Namespace('cart', description='cart related operations')
+#     cart = api.model('cart', {
+#         'quantity': fields.String(description='The cart quantity'),
+#         'product_id': fields.String(description='The product id'),
+#     })
+#     cart_checkout = api.model('cart_checkout', {
+#         'cart_id': fields.String()
+#     })

@@ -6,7 +6,6 @@ from .. import db, generate_uuid
 
 
 class SharedFieldModel(object):
-    id = db.Column(db.String(100), primary_key=True, default=generate_uuid)
     quantity = db.Column(db.Integer, default=0)
     subtotal_ex_tax = db.Column(db.Float, default=0)
     tax_total = db.Column(db.Float, default=0)
@@ -14,7 +13,7 @@ class SharedFieldModel(object):
 
     @declared_attr
     def user_id(self):
-        return db.Column(db.String(100), db.ForeignKey('user.public_id'), unique=True)
+        return db.Column(db.ForeignKey('user.id'), unique=True)
 
 
 class Cart(SharedFieldModel, db.Model):
@@ -23,11 +22,16 @@ class Cart(SharedFieldModel, db.Model):
     id = db.Column(db.String(100), primary_key=True, default=generate_uuid)
     cart_items = relationship("CartItem", back_populates="cart")
 
+    @classmethod
+    def get_cart_by_user_id(cls, user):
+        """Every customer can only have 1 cart at the time"""
+        return cls.query.filter_by(user_id=user.id).first()
+
     def __repr__(self):
         return f"<{self.__class__.__name__} '{self.id}'>"
 
     @classmethod
-    def get_cart_by_user_id(cls, user_id: str):
+    def get_cart_by_user(cls, user_id: str):
         db_response = cls.query.filter_by(user_id=user_id).first()
         return db_response
 

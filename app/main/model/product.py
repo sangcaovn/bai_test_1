@@ -8,7 +8,7 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=True)
 
-    cart_item = db.relationship("Product", back_populates="cart_item")
+    cart_item = db.relationship("CartItem", back_populates="product")
 
     def __repr__(self):
         return f'<Product: {self.name}>'

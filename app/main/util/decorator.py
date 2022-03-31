@@ -24,14 +24,12 @@ def admin_token_required(f: Callable):
     @wraps(f)
     def decorated(*args, **kwargs):
 
-        data, status = Auth.get_logged_in_user(request)
-        token = data.get('data')
+        data, status = Auth.get_logged_in_user_1(request)
 
-        if not token:
+        if isinstance(data, str):
             return data, status
 
-        admin = token.get('admin')
-        if not admin:
+        if not data.admin:
             response_object = {
                 'status': 'fail',
                 'message': 'admin token required'

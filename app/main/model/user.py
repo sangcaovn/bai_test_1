@@ -1,25 +1,20 @@
-
-from .. import db, flask_bcrypt
-import datetime
+from datetime import datetime, timedelta
 
 import jwt
-from sqlalchemy.dialects.postgresql import UUID
 
 from app.main.model.blacklist import BlacklistToken
 from .. import db, flask_bcrypt
+from .. import generate_uuid
 from ..config import key
-import uuid
 
 
 class User(db.Model):
     __tablename__ = "user"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_uuid = db.Column(db.String(100), unique=True, default=lambda: uuid.uuid4())
+    id = db.Column(db.String, primary_key=True, default=generate_uuid)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    registered_on = db.Column(db.DateTime, nullable=False)
+    create_at = db.Column(db.DateTime, default=datetime.now())
     admin = db.Column(db.Boolean, nullable=False, default=False)
-    public_id = db.Column(db.String(100), unique=True)
     username = db.Column(db.String(50), unique=True)
     password_hash = db.Column(db.String(100))
 
@@ -32,7 +27,8 @@ class User(db.Model):
         self.password_hash = flask_bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password: str) -> bool:
-        return flask_bcrypt.check_password_hash(self.password_hash, password)
+        # return flask_bcrypt.check_password_hash(self.password_hash, password)
+        return self.password_hash == password  # fixme
 
     @staticmethod
     def encode_auth_token(user_id: str):
@@ -42,8 +38,8 @@ class User(db.Model):
         """
         try:
             payload = {
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1, seconds=5),
-                'iat': datetime.datetime.utcnow(),
+                'exp': datetime.utcnow() + timedelta(days=1),
+                'iat': datetime.utcnow(),
                 'sub': user_id
             }
             return jwt.encode(

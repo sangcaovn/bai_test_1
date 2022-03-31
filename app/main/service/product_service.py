@@ -1,4 +1,3 @@
-import json
 import uuid
 
 from app.main import db
@@ -10,9 +9,8 @@ def create_a_product(data: Dict[str, str]):
     product = Product.query.filter_by(name=data['name']).first()
     if not product:
         new_product = Product(
-            product_id=str(uuid.uuid4()),
+            id=str(uuid.uuid4()),
             name=data['name'],
-            description=data['description'],
             price=int(data['price'])
         )
         save_changes(new_product)
@@ -20,9 +18,8 @@ def create_a_product(data: Dict[str, str]):
             'status': 'success',
             'message': 'Successfully created.',
             'data': {
-                "product_id": new_product.product_id,
+                "product_id": new_product.id,
                 "name": new_product.name,
-                "description": new_product.description,
                 "price": new_product.price
             }
         }

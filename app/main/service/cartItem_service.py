@@ -17,7 +17,7 @@ def create_a_cart_item(cart_id, data: Dict[str, str]):
             new_cartItem = CartItem(
                 cart_item_id=str(uuid.uuid4()),
                 cart_id=cart_id,
-                product_id=data['product_id'],
+                id=data['product_id'],
                 quantity=int(data['quantity']),
                 subtotal_ex_tax=contentsTotal,
                 tax_total=tax_total,
