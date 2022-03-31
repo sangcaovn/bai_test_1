@@ -5,7 +5,7 @@ class CartItem(db.Model):
     __tablename__ = "cart_item"
 
     id = db.Column(db.String, primary_key=True)
-    product_id = db.Column(db.String(200), unique=True, nullable=True)
+    product_id = db.Column(db.String(200), nullable=True)
     quantity = db.Column(db.Integer, nullable = False)
     subtotal_ex_tax = db.Column(db.Float, nullable=False)
     tax_total = db.Column(db.Float, nullable=False)

@@ -22,4 +22,4 @@ class Cart(db.Model):
     payment_status=db.Column(db.String(100), nullable=True)
     
     def __repr__(self):
-        return "<Product '{}'>".format(self.name)
+        return "<Cart '{}'>".format(self.cart_uuid)

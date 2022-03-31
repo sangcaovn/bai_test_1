@@ -11,7 +11,7 @@ from typing import Dict
 from app.main.model.cart_item import CartItem
 from app.main.model.user import User
 from app.main.service.auth_helper import Auth
-from app.main.service.cart_item_service import change_type_after_checking_out
+from app.main.service.cart_item_service import change_type_after_checking_out, save_new_item
 
 def save_new_cart(user_id : int):
     cart = Cart.query.filter_by(user_id=user_id).first()
@@ -73,6 +73,27 @@ def change_payment_status_after_checking_out(cart_id:int):
     db.session.commit()
 
     return num_rows_updated
+
+def add_cart(data):
+    user_id = Auth.get_cart_from_user_id(request)
+    cart = Cart.query.filter_by(user_id=user_id).first()
+    if not cart:
+        # Create a new cart
+        new_cart = Cart(
+            create_at=datetime.datetime.utcnow(),
+            update_at=datetime.datetime.utcnow(),
+            user_id = user_id
+        )
+        save_changes(new_cart)
+        # Re-query to get cart
+        cart = Cart.query.filter_by(user_id=user_id).first()
+        cart_id = cart.id
+        cart_uuid = cart.cart_uuid
+        # save cart item
+        return save_new_item(user_id, cart_uuid, cart_id=cart_id, data=data)
+    else:
+        return save_new_item(user_id, cart.cart_uuid, cart_id=cart.id, data=data)
+
 
 def checkout():
     user_id = Auth.get_cart_from_user_id(request)

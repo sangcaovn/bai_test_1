@@ -11,17 +11,17 @@ _cart = CartDto.cart
 
 _cart_item_updater = CartItemDtoQuantity.api
 
-@api.route('/add-item/<cart_id>')
-@api.param('cart_id', 'The Cart identifier')
-@api.response(404, 'Cart not found.')
-class CartItemCreator(Resource):
-    @api.doc('Add item to cart')
-    @api.response(201, 'Add item successfully created.')
-    @api.expect(_cart, validate=True)
-    def post(self, cart_id):
-        """ Update items in cart """
-        data = request.json
-        return save_new_item(cart_id, data=data)
+# @api.route('/add-item/<cart_id>')
+# @api.param('cart_id', 'The Cart identifier')
+# @api.response(404, 'Cart not found.')
+# class CartItemCreator(Resource):
+#     @api.doc('Add item to cart')
+#     @api.response(201, 'Add item successfully created.')
+#     @api.expect(_cart, validate=True)
+#     def post(self, cart_id):
+#         """ Update items in cart """
+#         data = request.json
+#         return save_new_item(cart_id, data=data)
 
 @api.route('/<cart_item_id>/changeqty')
 @api.param('cart_item_id', 'The Cart Item identifier')
