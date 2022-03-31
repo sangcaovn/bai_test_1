@@ -33,4 +33,4 @@ class CartItem(Resource):
     def delete(self, cart_item_id):
         """Delete a cart item"""
         data = request.json
-        return delete_cart_item(data=data, cart_item_id=cart_item_id)
+        return delete_cart_item(cart_item_id=cart_item_id)

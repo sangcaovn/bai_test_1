@@ -7,7 +7,9 @@ from app.main.model.cartitem import CartItem
 from app.main.service.auth_helper import Auth
 from app.main.model.user import User
 from app.main.model.product import Product
-from app.main.service.cartitem_service import add_new_cart_item
+from app.main.service.cartitem_service import add_new_cart_item, delete_cart_item
+from app.main.service.order_service import add_new_order
+from app.main.service.orderitem_service import add_new_order_item
 
 def add_new_cart(data: Dict[str, str]):
     auth_token = request.headers.get('Authorization')
@@ -66,7 +68,7 @@ def add_new_cart(data: Dict[str, str]):
                     "total" : total
                 }
             }
-            return response_object, 201
+            return response_object, 200
             
         else:
             data_cartitem_response = add_new_cart_item(cart.cart_id, data)
@@ -160,3 +162,45 @@ def update_cart(user_id, quantity, subtotal_ex_tax, tax_total, total):
 def save_changes(data: Cart):
     db.session.add(data)
     db.session.commit()
+
+
+def checkout_cart(data):
+    auth_token = request.headers.get('Authorization')
+    if auth_token:
+        user_id = User.decode_auth_token(auth_token)
+    cart = Cart.query.filter_by(user_id=user_id).first()
+    list_cart_item = CartItem.query.filter_by(cart_id=cart.cart_id).all()
+
+    if cart:
+        add_new_order(
+            order_id = cart.cart_id,
+            user_id = cart.user_id,
+            quantity = cart.quantity,
+            subtotal_ex_tax = cart.subtotal_ex_tax,
+            tax_total = cart.tax_total,
+            total = cart.total
+        )
+
+        for cart_item in list_cart_item:
+            add_new_order_item(
+                order_item_id = cart_item.cart_item_id,
+                order_id = cart_item.cart_id,
+                product_id = cart_item.product_id,
+                quantity = cart_item.quantity,
+                subtotal_ex_tax = cart_item.subtotal_ex_tax,
+                tax_total = cart_item.tax_total,
+                total = cart_item.total
+            )
+            delete_cart_item(cart_item.cart_item_id)
+
+        db.session.delete(cart)
+        db.session.commit()
+        response_object = {
+                'status': 'success',
+                'message': 'successfully checkout cart.'
+            }
+        return response_object, 200
+    
+
+        
+

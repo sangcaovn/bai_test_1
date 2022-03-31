@@ -1,11 +1,11 @@
 from flask import request
 from flask_restx import Resource
-from app.main.service.cart_service import add_new_cart
+from app.main.service.cart_service import add_new_cart, checkout_cart
 
 from app.main.util.decorator import admin_token_required
 from ..util.dto import CartDto
-from ..service.product_service import add_new_product, get_all_products, get_a_product, update_a_product
 from typing import Dict
+
 
 api = CartDto.api
 _cart = CartDto.cart
@@ -22,3 +22,16 @@ class Cart(Resource):
         """Creates a new Cart """
         data = request.json
         return add_new_cart(data=data)
+
+
+@api.route('/checkout')
+class CartCheckout(Resource):
+    @api.doc('checkout_a_card')
+    # @admin_token_required
+    @api.response(201, 'Cart successfully checkout.')
+    @api.doc('checkout a cart')
+    @admin_token_required
+    def post(self):
+        """Checkout a Cart """
+        data = request.json
+        return checkout_cart(data=data)

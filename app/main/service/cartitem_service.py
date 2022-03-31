@@ -104,7 +104,7 @@ def change_quantity(data: Dict[str, str], cart_item_id):
         return response_object, 200
 
 
-def delete_cart_item(data: Dict[str, str], cart_item_id):
+def delete_cart_item(cart_item_id):
     cart_item = CartItem.query.filter_by(cart_item_id=cart_item_id).first()   
     if not cart_item:
         response_object = {

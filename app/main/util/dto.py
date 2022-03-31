@@ -30,12 +30,12 @@ class ProductDto:
 class CartDto:
     api = Namespace('cart', description='cart related operations')
     cart = api.model('cart', {
-        'product_id': fields.String(required=True, description='The product id'),
+        'product_id': fields.String(required=True,description='The product id'),
         'quantity': fields.Integer(description='The cart quantity'),
     })
 
 class CartItemDto:
     api = Namespace('cart-item', description='cart-item related operations')
-    cartitem = api.model('cart', {
+    cartitem = api.model('cart-item', {
         'quantity': fields.Integer(description='The cart quantity'),
     })
