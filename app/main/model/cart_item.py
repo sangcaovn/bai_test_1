@@ -1,3 +1,4 @@
+from app.main.enum.type_enum import TypeEnum
 from .. import db
 
 class CartItem(db.Model):
@@ -13,6 +14,7 @@ class CartItem(db.Model):
     # Define relationships
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
     # product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    type=db.Column(db.String(50), default=lambda:TypeEnum.CartItem.value)
     
     def __repr__(self):
         return "<Cart Item '{}'>".format(self.id)

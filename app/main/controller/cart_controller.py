@@ -3,7 +3,7 @@ from flask_restx import Resource
 
 from app.main.util.decorator import admin_token_required
 from ..util.dto import CartDto
-from ..service.cart_service import add_item_to_cart, save_new_cart
+from ..service.cart_service import add_item_to_cart, checkout, save_new_cart
 from ..service.cart_item_service import save_new_item
 from typing import Dict, Tuple
 
@@ -31,3 +31,14 @@ class Cart(Resource):
 #         """ Update items in cart """
 #         data = request.json
 #         return save_new_item(cart_id, data=data)
+
+@api.route('/checkout')
+@api.response(200, 'OK')
+@api.response(400, 'Bad Request')
+@api.response(403, 'Forbidden')
+class CartCheckout(Resource):
+    @api.doc('Check the cart out for the current user')
+    @api.response(200, 'Cart successfully checked out.')
+    def post(self):
+        """get a user given its identifier"""
+        return checkout()

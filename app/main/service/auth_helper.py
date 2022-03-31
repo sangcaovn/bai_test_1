@@ -17,6 +17,7 @@ class Auth:
                         'status': 'success',
                         'message': 'Successfully logged in.',
                         'id': user.id,
+                        'uuid': user.public_id,
                         'email': user.email,
                         'username': user.username,
                         'Authorization': auth_token.decode()
@@ -90,3 +91,12 @@ class Auth:
                 'message': 'Provide a valid auth token.'
             }
             return response_object, 401
+
+    @staticmethod
+    def get_cart_from_user_id(new_request):
+        # get the auth token
+        auth_token = new_request.headers.get('Authorization')
+        if auth_token:
+            return User.decode_auth_token(auth_token)
+        
+        return None

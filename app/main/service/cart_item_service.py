@@ -1,6 +1,7 @@
 import json
 from app.main import db
 from flask import jsonify
+from app.main.enum.type_enum import TypeEnum
 from app.main.model.cart_item import CartItem
 import datetime
 from typing import Dict
@@ -90,3 +91,9 @@ def delete_cart_item(cart_item_id):
     db.session.commit()
 
     return 'deleted successfully!', 200
+
+def change_type_after_checking_out(cart_id: int):
+    cart_items = CartItem.query.filter_by(cart_id = cart_id).all()
+    for item in cart_items:
+        num_rows_updated = CartItem.query.filter_by(id=item.id).update(dict(type=TypeEnum.OrderDetail.value))
+        db.session.commit()
