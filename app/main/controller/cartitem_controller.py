@@ -24,9 +24,8 @@ class CartItem(Resource):
 
 @api.route('/<cart_item_id>/')
 class CartItem(Resource):
-    @api.doc('change_quantity_cart_item')
+    @api.doc('delete_cart_item')
     @admin_token_required
-    @api.expect(_cartitem, validate=True)
     @api.response(201, 'Delete successfully.')
     @api.doc('Delete a cart item')
     @admin_token_required
