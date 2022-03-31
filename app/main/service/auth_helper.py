@@ -37,9 +37,11 @@ class Auth:
     def get_logged_in_user(new_request):
         # get the auth token
         auth_token = new_request.headers.get('Authorization')
+        
         if auth_token:
             resp = User.decode_auth_token(auth_token)
-            if not isinstance(resp, str):
+            if resp:
+                print ("resp>>>>>>>>>>",resp)
                 user = User.query.filter_by(user_uuid=resp).first()
                 response_object = {
                     'status': 'success',

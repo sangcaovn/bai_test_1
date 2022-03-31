@@ -9,6 +9,10 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=True)
 
+    @staticmethod
+    def get_product_by_uuid(product_uuid):
+        return Product.query.filter_by(product_uuid=product_uuid).first()
+
     def __init__(self, data):
         self.name = data.get("name")
         self.price = data.get("price")

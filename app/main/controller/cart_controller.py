@@ -13,12 +13,13 @@ _cart = CartDto.cart
 @api.route('/add')
 class Cart(Resource):
     @api.expect(_cart, validate=True)
-    @api.response(201, 'Cart successfully created.')
+    @api.response(200, 'Cart successfully created.')
     @api.doc('create a new cart')
     @token_required
     def post(self):
         """Creates a new Cart """
         data = request.json
+        print (">>>>>>>>>>>>",data)
         return save_new_cart(data=data)
 
 

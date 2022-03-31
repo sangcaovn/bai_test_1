@@ -1,4 +1,5 @@
 
+import uuid
 from app.main import db
 from flask import request, jsonify
 from app.main.enum.type_enum import TypeEnum
@@ -8,8 +9,8 @@ from app.main.model.cart import Cart
 from app.main.model.product import Product
 from app.main.service.auth_helper import Auth
 
-def get_cart_by_user_id(user_id):
-    cart= Cart.query.filter_by(user_id==user_id).first()
+def get_cart_by_user_id(user_uuid):
+    cart= Cart.query.filter_by(user_uuid=user_uuid).first()
 
     return {"order_id": "string",
             "userId": "string",
@@ -32,34 +33,68 @@ def save_new_cart(data):
     user_uuid=Auth.get_cart_from_user_id(request)
     if user_uuid:
         cart_data=Cart.query.filter_by(user_uuid=user_uuid).first()
+        product=Product.get_product_by_uuid(data.get("productId"))
+        if not product: 
+            return {"message":"could not found product with input id!!!"}, 403
+
         if cart_data:
             cart_items=CartItem.query.filter_by(cart_id=cart_data.id,
-            product_uuid=data.get("product_id")).all()
-            if len(cart_items)>0:
+            product_uuid=data.get("productId")).all()
+            if cart_items:
                 for itm in cart_items:
-                    itm.quantity += data.get("quantity")
-                    itm.save()
-            else:
-                product=Product.query.filter_by(product_uuid=data.get("product_id")).first()
+                    tmp=Product.get_product_by_uuid(itm.product_uuid)
+                    quantity=itm.quantity + int(data.get("quantity"))
+                    itm.quantity = quantity
 
+                    sub_total=quantity*tmp.price
+                    itm.subtotal_ex_tax=sub_total
+
+                    tax_total=(sub_total*10)/100
+
+                    itm.tax_total=tax_total
+                    itm.total=sub_total+tax_total
+            else:
                 cart_item=CartItem()
                 cart_items.cart_id=cart_data.id
-                cart_items.cart_item_uuid=cart_data.cart_id
-                cart_item.product_uuid=data.get("product_id")
+
+                cart_item.product_uuid=data.get("productId")
                 cart_item.subtotal_ex_tax=int(data.get("quantity"))
 
-                if product:
-                    cart_item.tax_total=int(data.get("quantity"))*product.price
-                else:
-                    cart_item.tax_total=int(data.get("quantity"))
-                cart_item.total=data.get("quantity")
+                sub_total=int(data.get("quantity"))*product.price
+                cart_item.subtotal_ex_tax=sub_total
+
+                tax_total=(sub_total*10)/100
+                cart_item.tax_total=tax_total
+
+                cart_item.total=sub_total+tax_total
                 cart_item.quantity=int(data.get("quantity"))
                 db.session.add(cart_item)
 
-                db.session.commit()
+            db.session.commit()
 
-                # return data as required
-                return jsonify(get_cart_by_user_id(user_uuid)), 200
+            # return data as required
+            return get_cart_by_user_id(user_uuid), 200
+        else:
+            cart_data=Cart()
+            cart_data.cart_uuid=uuid.uuid4()
+            cart_data.user_uuid=user_uuid
+
+            cart_item=CartItem()
+            cart_item.product_uuid=data.get("productId")
+
+            sub_total=int(data.get("quantity"))*product.price
+            cart_item.subtotal_ex_tax=sub_total
+
+            cart_item.quantity=int(data.get("quantity"))
+            tax_total=(sub_total*10)/100
+            cart_item.tax_total=tax_total
+            cart_item.total=sub_total+tax_total
+
+            cart_data.cart_items.append(cart_item)
+            save_changes(cart_data)
+
+            # return data as required
+            return jsonify(get_cart_by_user_id(user_uuid)), 200
 
     return {"message":"Bad request!!!"}, 403
 
