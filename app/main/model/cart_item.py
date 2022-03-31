@@ -17,7 +17,4 @@ class CartItem(db.Model):
     total=db.Column(db.Float, nullable=True)
 
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
-
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
-    product = db.relationship("Product", back_populates="cart_item")
     type=db.Column(db.String(50), default=lambda:TypeEnum.CartItem.value)

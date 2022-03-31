@@ -9,8 +9,6 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=True)
 
-    cart = db.relationship("Product", back_populates="cart_item")
-
     def __init__(self, data):
         self.name = data.get("name")
         self.price = data.get("price")

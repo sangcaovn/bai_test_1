@@ -1,7 +1,7 @@
 from flask_restx import Api
 from flask import Blueprint
 
-# from .main.controller.user_controller import api as user_ns
+from .main.controller.user_controller import api as user_ctl
 from .main.controller.auth_controller import api as auth_ctl
 from .main.controller.cart_controller import api as cart_ctl
 from .main.controller.cart_item_controller import api as cart_item_ctl
@@ -24,6 +24,7 @@ api = Api(
     security='apikey'
 )
 
+api.add_namespace(user_ctl, path='/user')
 api.add_namespace(auth_ctl, path='/user')
 api.add_namespace(cart_ctl)
 api.add_namespace(cart_item_ctl, path='/cart-item')
