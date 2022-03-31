@@ -1,7 +1,8 @@
-from email.policy import default
+from marshmallow import Schema, fields
 import uuid
 
 from app.main.enum.type_enum import TypeEnum
+from app.main.model.cart_item import CartItemSchema
 from .. import db
 
 class Cart(db.Model):
@@ -21,3 +22,9 @@ class Cart(db.Model):
     #     self.cart_uuid = data.get("cart_uuid")
     #     self.order_uuid = data.get("order_uuid")
     #     self.user_uuid = data.get("user_uuid")
+
+class CartSchema(Schema):
+    id = fields.Integer()
+    cart_uuid = fields.String()
+    user_uuid = fields.String()
+    cart_items=fields.Nested(CartItemSchema)

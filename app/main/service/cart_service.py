@@ -4,38 +4,32 @@ import uuid
 from app.main import db
 from flask import request, jsonify
 from app.main.enum.type_enum import TypeEnum
-from app.main.model.cart_item import CartItem
+from app.main.model.cart_item import CartItem, CartItemSchema
 
-from app.main.model.cart import Cart
+from app.main.model.cart import Cart, CartSchema
 from app.main.model.product import Product
 from app.main.service.auth_helper import Auth
 
-def obj_to_json(lst_obj):
-    objs = []
-    for obj in lst_obj:
-        objs.append(json.dumps(obj))
-    return objs
+cart_schema=CartSchema()
+cart_item_schema=CartItemSchema(many=True)
 
 def response_add_cart(user_uuid):
     cart= Cart.query.filter_by(user_uuid=user_uuid).first()
-    # print ("json data: ",obj_to_json(cart.cart_items))
-    return {
+    obj= {
             "cart_id": cart.cart_uuid,
             "userId": cart.user_uuid,
-            "cart_items": [
-                {
-                    "cart_item_id": "string",
-                    "product_id": "518e8af7-6617-42a3-a227-b9be1b70fec8",
-                    "quantity": 3,
-                    "subtotal_ex_tax": 0,
-                    "tax_total": 0,
-                    "total": 0
-                }
-            ],
+            "cart_items": None,
             "subtotal_ex_tax": 0,
             "tax_total": 0,
             "total": 0
-            }
+        }
+        
+    obj["subtotal_ex_tax"]=sum(row.subtotal_ex_tax for row in cart.cart_items)
+    obj["tax_total"]=sum(row.tax_total for row in cart.cart_items)
+    obj["total"]=sum(row.total for row in cart.cart_items)
+    obj["cart_items"]=json.loads(cart_item_schema.dumps(cart.cart_items))
+
+    return obj
 
 def response_change_cart_qty(user_uuid):
     cart= Cart.query.filter_by(user_uuid=user_uuid).first()
