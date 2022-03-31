@@ -10,5 +10,12 @@ class Product(db.Model):
 
     cart_item = db.relationship("CartItem", back_populates="product")
 
+    def to_response(self):
+        return {
+                "product_id": self.id,
+                "name": self.name,
+                "price": self.price
+            }
+
     def __repr__(self):
         return f'<Product: {self.name}>'

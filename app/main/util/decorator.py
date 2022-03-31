@@ -11,7 +11,7 @@ def token_required(f):
     def decorated(*args, **kwargs):
         data, status = Auth.get_logged_in_user_1(request)
 
-        if isinstance(data, str) and status != 200:
+        if isinstance(data, dict) or status != 200:
             return data, status
 
         kwargs["current_user"] = data
@@ -26,7 +26,7 @@ def admin_token_required(f: Callable):
 
         data, status = Auth.get_logged_in_user_1(request)
 
-        if isinstance(data, str):
+        if isinstance(data, dict) or status != 200:
             return data, status
 
         if not data.admin:

@@ -17,10 +17,11 @@ class CartDto:
         'quantity': fields.Integer(required=True, description='quantity'),
     })
 
+
 class CartItemDto:
     api = Namespace('cart_item', description='cart item string data to update,delete')
     cart_item_id = api.model('cart_item_change_qty', {
-        'cart_item_id': fields.String(required=True, description='cart item id hash')
+        'quantity': fields.Integer(required=True, description='quantity')
     })
 
 
@@ -36,11 +37,8 @@ class ProductDto:
     api = Namespace('product', description='product related operations')
     product = api.model('product', {
         'name': fields.String(required=True, description='The product name'),
-        'description': fields.String(required=True, description='The product description'),
         'price': fields.String(required=True, description='The product price'),
-        'product_id': fields.String(description='The product id')
     })
-
 
 # class CartDto:
 #     api = Namespace('cart', description='cart related operations')
