@@ -32,3 +32,13 @@ class CartDto:
         'quantity' : fields.String(description='The cart quantity'),
         'product_id' : fields.String(description='The product id'),
     })
+class CartItemDto:
+    api = Namespace('cartitem', description='cart item related operations')
+    cartItem = api.model('cartitem', {
+        'quantity' : fields.String(description='The cart item quantity'),
+    })
+class OrderDto:
+    api = Namespace('order', description='order related operations')
+    order = api.model('order', {
+        'cart_id' : fields.String(description='The id of cart'),
+    })

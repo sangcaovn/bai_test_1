@@ -39,7 +39,6 @@ class Product(Resource):
         else:
             return product
     @api.doc('update a product')
-    @api.marshal_with(_product)
     def patch(self, name):
         """Update a product """
         data = request.json
