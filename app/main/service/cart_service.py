@@ -25,13 +25,9 @@ def save_new_cart(data, customer):
             product_id=data.get("product_id")
         ).all()
     else:
-        cart = Cart(
-            user_id=customer.id,
-        )
+        cart = Cart(user_id=customer.id)
 
     quantity = data.get("quantity")
-    subtotal_ex_tax = product.price * quantity
-    tax_total = subtotal_ex_tax * 0.1
 
     if len(cart_items) > 0:
         for itm in cart_items:
@@ -43,37 +39,24 @@ def save_new_cart(data, customer):
             cart=cart
         )
         db.session.add(cart_item)
-
     db.session.add(cart)
-
     db.session.commit()
-
     return get_cart_by_user_id(customer.id), 200
 
 
 def change_cart_quantity(cart_item_id, data, user):
     cart_data = Cart.query.filter_by(user_id=user.id).first()
-    if cart_data:
-        cart_item = CartItem.query.filter_by(id=cart_item_id).first()
-        if cart_item:
 
-            product = Product.query.filter_by(id=data.get("product_id")).first()
-            # calculate values for cart-item
-            cart_item.quantity += data.get("quantity")
+    if not cart_data:
+        return {"message": "Cart not found"}, 404
 
-            cart_item.subtotal_ex_tax = int(data.get("quantity"))
+    cart_item = CartItem.query.filter_by(id=cart_item_id).first()
+    if not cart_item:
+        return {"message": "Cart item not found"}, 404
 
-            if product:
-                cart_item.tax_total = int(data.get("quantity")) * product.price
-            else:
-                cart_item.tax_total = int(data.get("quantity"))
-            cart_item.total = data.get("quantity")
-            cart_item.quantity = int(data.get("quantity"))
-
-            db.session.commit()
-
-            # return data as required
-            return get_cart_by_user_id(user.id), 200
+    cart_item.quantity = data.get("quantity")
+    db.session.commit()
+    return get_cart_by_user_id(user.id), 200
 
 
 def checkout(user):
