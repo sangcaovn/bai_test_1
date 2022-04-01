@@ -18,9 +18,9 @@ authorizations = {
 
 api = Api(
     blueprint,
-    title='FLASK RESTPLUS(RESTX) API BOILER-PLATE WITH JWT',
+    title='DANG NGUYRN HOAI THU - TEST 01',
     version='1.0',
-    description='a boilerplate for flask restplus (restx) web service',
+    description='API written by Dang Nguyen Hoai Thu',
     authorizations=authorizations,
     security='apikey'
 )

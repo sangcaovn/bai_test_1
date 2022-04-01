@@ -1,48 +1,41 @@
-#### FLASK RESTX BOILER-PLATE WITH JWT
-
-### Terminal commands
-Note: make sure you have `pip` and `virtualenv` installed.
-
-    Initial installation: make install
-
-    To run test: make tests
-
-    To run application: make run
-
-    To run all commands at once : make all
-
-Make sure to run the initial migration commands to update the database.
-    
-    > python manage.py db init
-
-    > python manage.py db migrate --message 'initial database migration'
-
-    > python manage.py db upgrade
+#### ASSIGNMENT 1
 
 
-### Viewing the app ###
 
-    Open the following url on your browser to view swagger documentation
-    http://127.0.0.1:5000/
+### You must install Python3 and Pip3 to run this project
 
-
-### Using Postman ####
-
-    Authorization header is in the following format:
-
-    Key: Authorization
-    Value: "token_generated_during_login"
-
-    For testing authorization, url for getting all user requires an admin token while url for getting a single
-    user by public_id requires just a regular authentication.
-
-### Full description and guide ###
-https://medium.freecodecamp.org/structuring-a-flask-restplus-web-service-for-production-builds-c2ec676de563
+> I suggest using Python 3.10.3 and Pip 22.0.4
 
 
-### Contributing
-If you want to contribute to this flask restplus boilerplate, clone the repository and just start making pull requests.
 
-```
-https://github.com/cosmic-byte/flask-restplus-boilerplate.git
-```
+### DATABASE: PostgreSQL
+
+> username: admin
+
+> password: admin
+
+> database_name: Exe1
+
+
+
+### Make sure to run the initial migration commands to update the database.
+
+> flask db init
+
+> flask db migrate --message 'initial database migration'
+
+> flask db upgrade
+
+
+
+### To run the project:
+
+> flask run
+
+
+
+### Note: you need to create a user first
+
+> You can view all APIs on http://127.0.0.1:5000
+
+> To use other API, you need to run the login API first to get Authorization Token
