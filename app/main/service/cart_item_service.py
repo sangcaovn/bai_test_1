@@ -14,8 +14,8 @@ from app.main.service.auth_helper import Auth
 def get_cart_item(cart_item_id: str):
     return CartItem.query.filter_by(id=cart_item_id).first()
 
-def save_new_item(user_uuid, cart_uuid, cart_id: int, data: Dict[str, str]):
-    product_id = data['productId']
+def add_new_item(user_uuid, cart_uuid, cart_id: int, data: Dict[str, str]):
+    product_id = data['productID']
     quantity = data['quantity']
 
     product = Product.query.filter_by(public_id=product_id).first()
@@ -65,6 +65,7 @@ def save_new_item(user_uuid, cart_uuid, cart_id: int, data: Dict[str, str]):
         info = {}
         info['cart_item_id'] = item.id
         info['product_id'] = item.product_id
+        #info['product_name'] = item.product_name
         info['quantity'] = item.quantity
         info['subtotal_ex_tax'] = item.subtotal_ex_tax
         info['tax_total'] = item.tax_total
@@ -73,17 +74,6 @@ def save_new_item(user_uuid, cart_uuid, cart_id: int, data: Dict[str, str]):
         cart_subtotal_ex_tax += item.subtotal_ex_tax
         cart_tax_total += item.tax_total
         cart_total += item.total
-    
-    response_object = {
-        "cart_id": f"{cart_uuid}",
-        "user_id": f"{user_uuid}",
-        "cart_items": cart_items_list_json,
-        "subtotal_ex_tax": cart_subtotal_ex_tax,
-        "tax_total": cart_tax_total,
-        "total": cart_total
-    }
-
-    return response_object, 200
    
 
 def filter_multiple_fields(cart_id, product_id):
@@ -111,7 +101,7 @@ def update_quantity(cart_item_id, data):
     tax_total = subtotal_ex_tax * 0.1
     total = subtotal_ex_tax + tax_total
 
-    update_change_quantity_taxes(cart_item_id, new_quantity, subtotal_ex_tax, tax_total, total)
+    update_taxes(cart_item_id, new_quantity, subtotal_ex_tax, tax_total, total)
 
     # Re-query to get cart and cart items
     cart_items = CartItem.query.filter_by(cart_id = existed_cart_item.cart_id).all()
@@ -124,6 +114,7 @@ def update_quantity(cart_item_id, data):
         info = {}
         info['cart_item_id'] = item.id
         info['product_id'] = item.product_id
+        #info['product_name'] = item.product_name
         info['quantity'] = item.quantity
         info['subtotal_ex_tax'] = item.subtotal_ex_tax
         info['tax_total'] = item.tax_total
@@ -132,24 +123,14 @@ def update_quantity(cart_item_id, data):
         cart_subtotal_ex_tax += item.subtotal_ex_tax
         cart_tax_total += item.tax_total
         cart_total += item.total
-    
-    response_object = {
-        "cart_id": f"{cart.cart_uuid}",
-        "user_id": f"{user.public_id}",
-        "cart_items": cart_items_list_json,
-        "subtotal_ex_tax": cart_subtotal_ex_tax,
-        "tax_total": cart_tax_total,
-        "total": cart_total
-    }
 
-    return response_object, 200
 
 def save_changes(cart_item: CartItem):
     db.session.add(cart_item)
     db.session.commit()
 
 def update_change(cart_id, product_id, new_quantity, subtotal_ex_tax, tax_total, total):
-    num_rows_updated = CartItem.query.filter_by(cart_id=cart_id, product_id=product_id).update(
+    updated = CartItem.query.filter_by(cart_id=cart_id, product_id=product_id).update(
         dict(
             quantity=new_quantity,
             subtotal_ex_tax = subtotal_ex_tax,
@@ -160,8 +141,8 @@ def update_change(cart_id, product_id, new_quantity, subtotal_ex_tax, tax_total,
     
     db.session.commit()
 
-def update_change_quantity_taxes(cart_item_id, new_quantity, subtotal_ex_tax, tax_total, total):
-    num_rows_updated = CartItem.query.filter_by(id=cart_item_id).update(
+def update_taxes(cart_item_id, new_quantity, subtotal_ex_tax, tax_total, total):
+    updated = CartItem.query.filter_by(id=cart_item_id).update(
         dict(
             quantity=new_quantity,
             subtotal_ex_tax = subtotal_ex_tax,
@@ -194,6 +175,7 @@ def delete_cart_item(cart_item_id):
         info = {}
         info['cart_item_id'] = item.id
         info['product_id'] = item.product_id
+        #info['product_name'] = item.product_name
         info['quantity'] = item.quantity
         info['subtotal_ex_tax'] = item.subtotal_ex_tax
         info['tax_total'] = item.tax_total
@@ -203,19 +185,9 @@ def delete_cart_item(cart_item_id):
         cart_tax_total += item.tax_total
         cart_total += item.total
     
-    response_object = {
-        "cart_id": f"{cart.cart_uuid}",
-        "user_id": f"{user.public_id}",
-        "cart_items": cart_items_list_json,
-        "subtotal_ex_tax": cart_subtotal_ex_tax,
-        "tax_total": cart_tax_total,
-        "total": cart_total
-    }
-
-    return response_object, 200
-
-def change_type_after_checking_out(cart_id: int):
+    
+def checkout_type(cart_id: int):
     cart_items = CartItem.query.filter_by(cart_id = cart_id).all()
     for item in cart_items:
-        num_rows_updated = CartItem.query.filter_by(id=item.id).update(dict(type=TypeEnum.OrderDetail.value))
+        change_type = CartItem.query.filter_by(id=item.id).update(dict(type=TypeEnum.OrderDetail.value))
         db.session.commit()

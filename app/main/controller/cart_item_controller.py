@@ -2,12 +2,12 @@ from flask import request
 from flask_restx import Resource
 
 from app.main.util.decorator import admin_token_required, token_required
-from ..util.dto import CartItemDtoQuantity
-from ..service.cart_item_service import save_new_item, update_quantity, delete_cart_item
+from ..util.dto import CartItemQuantityDto
+from ..service.cart_item_service import add_new_item, update_quantity, delete_cart_item
 from typing import Dict, Tuple
 
-api=CartItemDtoQuantity.api
-_cart_item_updater = CartItemDtoQuantity.quantity_updater
+api=CartItemQuantityDto.api
+_cart_item_updater = CartItemQuantityDto.quantity_updater
 
 @api.route('/<cart_item_id>/changeqty')
 @api.param('cart_item_id', 'The Cart Item identifier')

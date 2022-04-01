@@ -12,8 +12,10 @@ class Product(db.Model):
     price = db.Column(db.Float)
     quantity = db.Column(db.Integer)
     is_available = db.Column(db.Boolean, nullable=False, default=False)
+    
 
     # Define relationship
+    # cart_items = db.relationship("CartItem",uselist=False, backref="product")
     # cart_item = db.relationship("CartItem", uselist=False, backref="product")
 
     def __repr__(self):

@@ -21,12 +21,12 @@ class AuthDto:
 class CartDto:
     api = Namespace('cart', description='cart related operations')
     cart = api.model('Cart', {
-            'productId': fields.String,
+            'productID': fields.String,
             'quantity': fields.Integer
     })
 
    
-class CartItemDtoQuantity:
+class CartItemQuantityDto:
     api = Namespace('cart-item', description='cart item related operations')
     quantity_updater = api.model('CartItemUpdate', {
         'quantity': fields.Integer(required=True, description='The new quantity to update '),
