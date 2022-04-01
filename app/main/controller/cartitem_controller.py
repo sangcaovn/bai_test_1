@@ -11,10 +11,13 @@ _cartitem = CartItemDto.cartitem
 
 @api.route('/<cart_item_id>/changeqty')
 class CartItem(Resource):
-    @api.doc('change_quantity_cart_item')
     @admin_token_required
     @api.expect(_cartitem, validate=True)
-    @api.response(201, 'Change quantity successfully.')
+    @api.doc(responses={
+        200: 'Success',
+        400: 'Bad Request',
+        403: 'Forbidden'
+    })
     @api.doc('change quantity a cart item')
     @admin_token_required
     def put(self, cart_item_id):
@@ -26,8 +29,11 @@ class CartItem(Resource):
 class CartItem(Resource):
     @api.doc('delete_cart_item')
     @admin_token_required
-    @api.response(201, 'Delete successfully.')
-    @api.doc('Delete a cart item')
+    @api.doc(responses={
+        200: 'Success',
+        400: 'Bad Request',
+        403: 'Forbidden'
+    })
     @admin_token_required
     def delete(self, cart_item_id):
         """Delete a cart item"""

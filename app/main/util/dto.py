@@ -37,5 +37,5 @@ class CartDto:
 class CartItemDto:
     api = Namespace('cart-item', description='cart-item related operations')
     cartitem = api.model('cart-item', {
-        'quantity': fields.Integer(description='The cart quantity'),
+        'quantity': fields.Integer(description='The cart-item quantity'),
     })

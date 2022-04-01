@@ -29,7 +29,8 @@ def add_new_cart_item(cart_id, data: Dict[str, str]):
             'status': 'success',
             'message': 'successfully add new cart item.',
             'data': {
-                "card_id": new_card_item.cart_id,
+                "cart_item_id": new_card_item.cart_item_id,
+                "cart_id": new_card_item.cart_id,
                 "product_id": new_card_item.product_id,
                 "quantity": new_card_item.quantity,
                 "subtotal_ex_tax": new_card_item.subtotal_ex_tax,

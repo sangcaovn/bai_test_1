@@ -42,6 +42,7 @@ def add_new_cart(data: Dict[str, str]):
                 cart_item_id = str(cart_item_id)
                 cart_item_tmp = CartItem.query.filter_by(cart_item_id = cart_item_id).first()
                 cart_item_dict = {
+                    "cart_item_id": cart_item_tmp.cart_item_id,
                     "card_id": cart_item_tmp.cart_id,
                     "product_id": cart_item_tmp.product_id,
                     "quantity": cart_item_tmp.quantity,
@@ -86,6 +87,7 @@ def add_new_cart(data: Dict[str, str]):
                 cart_item_id = str(cart_item_id)
                 cart_item_tmp = CartItem.query.filter_by(cart_item_id = cart_item_id).first()
                 cart_item_dict = {
+                    "cart_item_id": cart_item_tmp.cart_item_id,
                     "card_id": cart_item_tmp.cart_id,
                     "product_id": cart_item_tmp.product_id,
                     "quantity": cart_item_tmp.quantity,
@@ -201,6 +203,7 @@ def checkout_cart(data):
         list_order_item = []
         for order_item in all_order_item:
             order_item_dict = {
+                "order_item_id": order_item.order_item_id,
                 "order_id": order_item.order_id,
                 "product_id": order_item.product_id,
                 "quantity": order_item.quantity,

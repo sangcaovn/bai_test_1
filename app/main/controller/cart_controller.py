@@ -12,10 +12,13 @@ _cart = CartDto.cart
 
 @api.route('/add')
 class Cart(Resource):
-    @api.doc('list_of_all_carts')
     # @admin_token_required
     @api.expect(_cart, validate=True)
-    @api.response(201, 'Cart successfully created.')
+    @api.doc(responses={
+        200: 'Success',
+        400: 'Bad Request',
+        403: 'Forbidden'
+    })
     @api.doc('create a new cart')
     @admin_token_required
     def post(self):
@@ -26,9 +29,12 @@ class Cart(Resource):
 
 @api.route('/checkout')
 class CartCheckout(Resource):
-    @api.doc('checkout_a_card')
-    # @admin_token_required
-    @api.response(201, 'Cart successfully checkout.')
+    @admin_token_required
+    @api.doc(responses={
+        200: 'Success',
+        400: 'Bad Request',
+        403: 'Forbidden'
+    })
     @api.doc('checkout a cart')
     @admin_token_required
     def post(self):
