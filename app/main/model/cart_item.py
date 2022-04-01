@@ -21,12 +21,8 @@ class CartItem(db.Model):
     type=db.Column(db.String(50), default=lambda:TypeEnum.CartItem.value)
 
 class CartItemSchema(Schema):
-    # cart_item_id = fields.String(data_key="cart_item_uuid")
-    # product_id = fields.String(data_key="product_uuid")
-
-    cart_item_id = fields.String(load_from ='cart_item_uuid')
-    product_id = fields.String(load_from='product_uuid')
-
+    cart_item_uuid = fields.String(data_key="cart_item_id")
+    product_uuid = fields.String(data_key="product_id")
     quantity = fields.Integer()
     subtotal_ex_tax = fields.Integer()
     tax_total = fields.Integer()
