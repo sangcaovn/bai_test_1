@@ -5,15 +5,15 @@ from typing import Dict
 
 def create_a_product(data: Dict[str, str]):
     product = Product.query.filter_by(name=data['name']).first()
-    if not product:
-        new_product = Product(
-            name=data['name'],
-            price=int(data['price'])
-        )
-        save_changes(new_product)
-        return new_product.to_response(), 201
-    else:
-        return {"message": "Invalid input"}, 400
+    if product:
+        return {"message": "Product is already exist"}, 400
+
+    new_product = Product(
+        name=data['name'],
+        price=int(data['price'])
+    )
+    save_changes(new_product)
+    return new_product.to_response(), 201
 
 
 def get_product_list():

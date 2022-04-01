@@ -14,8 +14,9 @@ _cart_item = CartItemDto.cart_item_id
 class CartItem(Resource):
     @api.response(201, 'delete cart item successfully.')
     @api.doc('delete cart item cart item')
-    def delete(self, cart_item_id):
-        return delete_cart_item(cart_item_id)
+    @token_required
+    def delete(self, cart_item_id, current_user):
+        return delete_cart_item(cart_item_id, user=current_user)
 
     @api.expect(_cart_item, validate=True)
     @api.response(201, 'update quantity cart item successfully.')

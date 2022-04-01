@@ -12,11 +12,10 @@ class User(db.Model):
     __tablename__ = "user"
 
     id = db.Column(db.String, primary_key=True, default=generate_uuid)
-    email = db.Column(db.String(255), unique=True, nullable=False)
-    create_at = db.Column(db.DateTime, default=datetime.now())
     admin = db.Column(db.Boolean, nullable=False, default=False)
     username = db.Column(db.String(50), unique=True)
     password_hash = db.Column(db.String(100))
+    create_at = db.Column(db.DateTime, default=datetime.now())
 
     @property
     def password(self):
@@ -27,8 +26,7 @@ class User(db.Model):
         self.password_hash = flask_bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password: str) -> bool:
-        # return flask_bcrypt.check_password_hash(self.password_hash, password)
-        return self.password_hash == password  # fixme
+        return flask_bcrypt.check_password_hash(self.password_hash, password)
 
     @staticmethod
     def encode_auth_token(user_id: str):

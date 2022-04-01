@@ -5,12 +5,11 @@ from app.main.model.user import User
 
 
 def save_new_user(data: Dict[str, str]):
-    user = User.query.filter_by(email=data['email']).first()
+    user = User.query.filter_by(username=data['username']).first()
     if not user:
         new_user = User(
-            email=data['email'],
             username=data['username'],
-            password_hash=data['password']
+            password=data['password']
         )
         save_changes(new_user)
         return generate_token(new_user)

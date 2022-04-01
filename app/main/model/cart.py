@@ -33,9 +33,9 @@ class Cart(db.Model):
         }
 
     @classmethod
-    def get_cart_by_user_id(cls, user):
+    def get_cart_by_user_id(cls, user_id):
         """Every customer can only have 1 cart at the time"""
-        return cls.query.filter_by(user_id=user.id).first()
+        return cls.query.filter_by(user_id=user_id).first()
 
     def __repr__(self):
         return f"<{self.__class__.__name__} '{self.id}'>"
