@@ -10,6 +10,7 @@ class CartItem(db.Model):
     
     cart_item_uuid = db.Column(db.String(100), unique=True, default=lambda: uuid.uuid4())
     product_uuid = db.Column(db.String(100), unique=True)
+    order_product_uuid = db.Column(db.String(100))
 
     quantity = db.Column(db.Integer, nullable=False)
     subtotal_ex_tax=db.Column(db.Float, nullable=True)

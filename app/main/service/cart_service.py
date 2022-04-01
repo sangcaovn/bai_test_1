@@ -68,7 +68,8 @@ def save_new_cart(data):
                 cart_item=CartItem()
                 cart_items.cart_id=cart_data.id
 
-                cart_item.product_uuid=data.get("productId")
+                cart_item.product_uuid = data.get("productId")
+                cart_item.order_product_uuid =data.get("productId")
                 cart_item.subtotal_ex_tax=int(data.get("quantity"))
 
                 sub_total=int(data.get("quantity"))*product.price
@@ -93,6 +94,7 @@ def save_new_cart(data):
 
             cart_item=CartItem()
             cart_item.product_uuid=data.get("productId")
+            cart_item.order_product_uuid=data.get("productId")
 
             sub_total=int(data.get("quantity"))*product.price
             cart_item.subtotal_ex_tax=sub_total
@@ -153,6 +155,7 @@ def checkout_cart():
             
             for itm in cart_data.cart_items:
                 itm.type=TypeEnum.OrderDetail.value
+                itm.product_uuid=uuid.uuid4()
                 
             db.session.commit()
 
