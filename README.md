@@ -16,7 +16,19 @@
 
 > database_name: Exe1
 
+### CREATE VIRTUAL ENVIRONMENT
 
+> python3 -m venv env
+
+> source env/bin/activate
+
+### DEACTIVE VIRTUAL ENVIRONTMENT
+
+> source env/bin/deactive
+
+### INSTALL LIBRARY
+
+> pip install -r requirements.txt
 
 ### Make sure to run the initial migration commands to update the database.
 
