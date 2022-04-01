@@ -14,7 +14,7 @@ class Order(db.Model):
     subtotal_ex_tax = db.Column(db.Float)
     tax_total = db.Column(db.Float)
     total = db.Column(db.Float)
-    payment_status = db.Column(db.Integer, default=0)
+    payment_status = db.Column(db.String(10), default="INIT")
     
     order_items = db.relationship('Order_Item', backref = 'order', lazy='dynamic')
     def __repr__(self):

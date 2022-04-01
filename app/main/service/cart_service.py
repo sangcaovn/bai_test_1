@@ -214,7 +214,8 @@ def cart_check_out():
         "order_items":lst,
         "subtotal_ex_tax":new_order.subtotal_ex_tax,
         "tax_total":new_order.tax_total,
-        "total":new_order.total
+        "total":new_order.total,
+        "payment_status":new_order.payment_status
     }
     db.session.delete(cart)
     db.session.commit()
