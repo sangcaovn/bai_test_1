@@ -8,6 +8,13 @@
     > password: admin
     > database_name: exe1
 
+### CREATE AND ACTIVATE VITURAL ENVIROMENT
+    > python3 -m venv env
+    > source env/bin/activate
+
+### INSTALL LIBRARY
+    > pip3 install -r requirements.txt
+
 ### Make sure to run the initial migration commands to update the database.
     > flask db init
     > flask db migrate --message 'initial database migration'
@@ -16,6 +23,6 @@
 ### To run the project:
     > flask run
 
-### Note: you need to create a user first
+### NOTE: you need to create a user first (must be admin)
     > You can view all APIs on http://127.0.0.1:5000
     > To use other API, you need to run the login API first to get Authorization Token
