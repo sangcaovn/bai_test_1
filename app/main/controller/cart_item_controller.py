@@ -18,7 +18,7 @@ class CartItem(Resource):
     @api.expect(_cart_item_updater, validate=True)
     @token_required
     def put(self, cart_item_id):
-        """get a user given its identifier"""
+        """update quantity in cart item"""
         data = request.json
         return update_quantity(cart_item_id, data = data)
 
@@ -32,5 +32,5 @@ class CartItemRemover(Resource):
     @api.response(403, 'Forbidden')
     @token_required
     def delete(self, cart_item_id):
-        """get a user given its identifier"""
+        """delete cart item with its id"""
         return delete_cart_item(cart_item_id)

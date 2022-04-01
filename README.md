@@ -1,24 +1,29 @@
 #### FLASK RESTX BOILER-PLATE WITH JWT
 
+### Require environments
+Python 3.10.3
+PostgreSQL
+
 ### Terminal commands
 Note: make sure you have `pip` and `virtualenv` installed.
 
-    Initial installation: make install
+    > python3 -m venv env
 
-    To run test: make tests
+    > source env/bin/activate
 
-    To run application: make run
-
-    To run all commands at once : make all
+    > pip install -r requirements.txt
 
 Make sure to run the initial migration commands to update the database.
     
-    > python manage.py db init
+    > flask db init
 
-    > python manage.py db migrate --message 'initial database migration'
+    > flask db migrate
 
-    > python manage.py db upgrade
+    > flask db upgrade
 
+Run the application:
+
+    > flask run
 
 ### Viewing the app ###
 
@@ -36,13 +41,6 @@ Make sure to run the initial migration commands to update the database.
     For testing authorization, url for getting all user requires an admin token while url for getting a single
     user by public_id requires just a regular authentication.
 
+
 ### Full description and guide ###
 https://medium.freecodecamp.org/structuring-a-flask-restplus-web-service-for-production-builds-c2ec676de563
-
-
-### Contributing
-If you want to contribute to this flask restplus boilerplate, clone the repository and just start making pull requests.
-
-```
-https://github.com/cosmic-byte/flask-restplus-boilerplate.git
-```

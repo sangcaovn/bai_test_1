@@ -19,7 +19,7 @@ class Cart(Resource):
     @api.expect(_cart, validate = True)
     @token_required
     def post(self):
-        """create cart for loggin user"""
+        """create cart for logging-in user """
         data = request.json
         return add_cart(data=data)
 
@@ -33,5 +33,5 @@ class CartCheckout(Resource):
     @api.response(200, 'Cart successfully checked out.')
     @token_required
     def post(self):
-        """get a user given its identifier"""
+        """checkout cart for logging-in user"""
         return checkout()

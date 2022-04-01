@@ -20,6 +20,7 @@ class User(db.Model):
 
     # Define relationships
     cart = db.relationship("Cart", uselist=False, backref="user")
+    orders =  db.relationship("Order")
 
     @property
     def password(self):

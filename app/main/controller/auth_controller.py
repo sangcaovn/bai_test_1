@@ -13,7 +13,7 @@ class UserLogin(Resource):
     @api.doc('user login')
     @api.expect(user_auth, validate=True)
     def post(self):
-        # get the post data
+        """ User Login Activity """
         post_data = request.json
         return Auth.login_user(data=post_data)
 

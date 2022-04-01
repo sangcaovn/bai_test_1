@@ -1,6 +1,6 @@
 from app.main import db
 from flask import request
-from app.main.enum.type_enum import TypeEnum
+
 from app.main.model.cart import Cart
 from app.main.model.cart_item import CartItem
 from typing import Dict
@@ -98,9 +98,6 @@ def update_quantity(cart_item_id, data):
     existed_cart_item = CartItem.query.filter_by(id = cart_item_id).first()
     if not existed_cart_item:
         return "Cart item not found", 404
-    
-    if existed_cart_item.type == TypeEnum.OrderDetail.value:
-        return "Not allow to update order detail", 403
 
     product_id = existed_cart_item.product_id
     product = Product.query.filter_by(public_id=product_id).first()
@@ -177,8 +174,6 @@ def delete_cart_item(cart_item_id):
     cart = Cart.query.filter_by(user_id = user_id).first()
 
     cart_item = CartItem.query.filter_by(id = cart_item_id).first()
-    if cart_item.type == TypeEnum.OrderDetail.value:
-        return 'Not allowed to delete order detail!', 403
 
     CartItem.query.filter_by(id=cart_item_id).delete()
     db.session.commit()
@@ -213,9 +208,3 @@ def delete_cart_item(cart_item_id):
     }
 
     return response_object, 200
-
-def change_type_after_checking_out(cart_id: int):
-    cart_items = CartItem.query.filter_by(cart_id = cart_id).all()
-    for item in cart_items:
-        num_rows_updated = CartItem.query.filter_by(id=item.id).update(dict(type=TypeEnum.OrderDetail.value))
-        db.session.commit()

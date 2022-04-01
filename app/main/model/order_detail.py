@@ -1,7 +1,7 @@
 from .. import db
 
-class CartItem(db.Model):
-    __tablename__ = "cart_item"
+class OrderDetail(db.Model):
+    __tablename__ = "order_detail"
 
     id = db.Column(db.String, primary_key=True)
     product_id = db.Column(db.String(200), nullable=True)
@@ -11,7 +11,7 @@ class CartItem(db.Model):
     total = db.Column(db.Float, nullable=False)
 
     # Define relationships
-    cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
     
     def __repr__(self):
-        return "<Cart Item '{}'>".format(self.id)
+        return "<Order Detail '{}'>".format(self.id)
