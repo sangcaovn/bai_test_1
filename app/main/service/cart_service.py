@@ -134,7 +134,7 @@ def change_cart_quantity(cart_item_id,data):
         cart_item.tax_total =tax_total
 
         cart_item.total=sub_total+tax_total
-        cart_item.quatity=int(data.get("quantity"))
+        cart_item.quantity=int(data.get("quantity"))
 
 
         
