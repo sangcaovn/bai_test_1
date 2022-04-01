@@ -13,8 +13,6 @@ class Auth:
                 auth_token = User.encode_auth_token(user.user_uuid)
                 if auth_token:
                     response_object = {
-                        'status': 'success',
-                        'message': 'Successfully logged in.',
                         'Authorization': auth_token.decode()
                     }
                     return response_object, 200
