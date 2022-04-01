@@ -14,13 +14,13 @@ cart_schema=CartSchema()
 cart_item_schema=CartItemSchema(many=True)
 
 def response_data(user_uuid, payment_status=None):
-    cart= Cart.query.filter_by(user_uuid=user_uuid)
+    cart= Cart.query
     if payment_status:
-        cart=cart.filter_by(type=TypeEnum.Order.value).first()
+        cart=cart.filter_by(order_user_uuid=user_uuid).filter_by(type=TypeEnum.Order.value).first()
     else:
-        cart=cart.first()
+        cart=cart.filter_by(user_uuid=user_uuid).first()
     obj= {
-            "userId": cart.user_uuid,
+            "userId": user_uuid,
             "cart_items": None,
             "subtotal_ex_tax": 0,
             "tax_total": 0,
@@ -108,7 +108,7 @@ def save_new_cart(data):
             save_changes(cart_data)
 
             # return data as required
-            return jsonify(response_data(user_uuid)), 200
+            return response_data(user_uuid), 200
 
     return {"message":"Bad request!!!"}, 403
 
@@ -137,7 +137,7 @@ def change_cart_quantity(cart_item_id,data):
         db.session.commit()
 
         # return data as required
-        return jsonify(response_data(user_uuid)), 200
+        return response_data(user_uuid), 200
 
     return {"message":"Bad request!!!"}, 403
 
@@ -146,7 +146,8 @@ def checkout_cart():
     if user_uuid:
         cart_data=Cart.query \
             .filter_by(type=TypeEnum.Cart.value) \
-            .filter_by(user_uuid=user_uuid).first()
+            .filter_by(user_uuid=user_uuid) \
+            .first()
         if cart_data:
             cart_data.type=TypeEnum.Order.value
             cart_data.payment_status="INIT"
@@ -160,7 +161,7 @@ def checkout_cart():
             db.session.commit()
 
             # return data as required
-            return jsonify(response_data(user_uuid,"INIT")), 200
+            return response_data(user_uuid,"INIT"), 200
     return {"message":"Bad request!!!"}, 403
 
 def delete_cart_item(cart_item_uuid):
@@ -174,7 +175,7 @@ def delete_cart_item(cart_item_uuid):
         db.session.commit()
 
         # return data as required
-        return jsonify(response_data(user_uuid)), 200
+        return response_data(user_uuid), 200
 
     return {"message":"Bad request!!!"}, 403
 
