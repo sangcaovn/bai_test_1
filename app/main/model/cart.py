@@ -30,3 +30,4 @@ class Cart(db.Model):
             self.subtotal_ex_tax+=int(item.subtotal_ex_tax)
             self.tax_total+=int(item.tax_total)
             self.total+=int(item.total)
+        db.session.commit()

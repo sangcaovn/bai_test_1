@@ -28,6 +28,8 @@ class Cart_Item(db.Model):
         self.subtotal_ex_tax = self.quantity * prod.price
         self.tax_total = self.subtotal_ex_tax / 10
         self.total = self.subtotal_ex_tax + self.tax_total
+        db.session.commit()
     def change(self,num):
         self.quantity+=int(num)
         self.cal()
+        db.session.commit()

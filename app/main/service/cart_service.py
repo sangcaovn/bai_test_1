@@ -33,9 +33,9 @@ def save_new_cart(data):
             product_id=product_id
         )
         new_item.cal()
-        new_cart.calcu()
         save_changes(new_item)
         new_i = {
+            "cart_item_id":new_item.cart_item_id,
             "product_id":new_item.product_id,
             "quantity":new_item.quantity,
             "subtotal_ex_tax":new_item.subtotal_ex_tax,
@@ -43,7 +43,9 @@ def save_new_cart(data):
             "total":new_item.total
         }
         lst =[new_i]
+        new_cart.calcu()
         response_object = {
+            "cart_id":new_cart.cart_id,
             "user_id":new_cart.user_id,
             "cart_items":lst,
             "subtotal_ex_tax":new_cart.subtotal_ex_tax,
@@ -63,6 +65,7 @@ def save_new_cart(data):
                 item.cal()
                 db.session.commit()
             new_i = {
+                "cart_item_id":item.cart_item_id,
                 "product_id":item.product_id,
                 "quantity":item.quantity,
                 "subtotal_ex_tax":item.subtotal_ex_tax,
@@ -79,6 +82,7 @@ def save_new_cart(data):
             new_item.cal()
             save_changes(new_item)
             new_i = {
+                "cart_item_id":new_item.cart_item_id,
                 "product_id":new_item.product_id,
                 "quantity":new_item.quantity,
                 "subtotal_ex_tax":new_item.subtotal_ex_tax,
@@ -88,6 +92,7 @@ def save_new_cart(data):
             lst.append(new_i)
         cart.calcu()
         response_object = {
+            "cart_id":cart.cart_id,
             "user_id":cart.user_id,
             "cart_items":lst,
             "subtotal_ex_tax":cart.subtotal_ex_tax,
@@ -111,6 +116,7 @@ def del_cart_item(data):
         for item in all_cart_item:
             item.cal()
             new_i = {
+                "cart_item_id":item.cart_item_id,
                 "product_id":item.product_id,
                 "quantity":item.quantity,
                 "subtotal_ex_tax":item.subtotal_ex_tax,
@@ -118,7 +124,9 @@ def del_cart_item(data):
                 "total":item.total
                 }
             lst.append(new_i)
+        cart.calcu()
         response_object = {
+            "cart_id":cart.cart_id,
             "user_id":cart.user_id,
             "cart_items":lst,
             "subtotal_ex_tax":cart.subtotal_ex_tax,
@@ -143,6 +151,7 @@ def change_qty(data,num):
         for item in all_cart_item:
             item.cal()
             new_i = {
+                "cart_item_id":item.cart_item_id,
                 "product_id":item.product_id,
                 "quantity":item.quantity,
                 "subtotal_ex_tax":item.subtotal_ex_tax,
@@ -150,7 +159,9 @@ def change_qty(data,num):
                 "total":item.total
                 }
             lst.append(new_i)
+        cart.calcu()
         response_object = {
+            "cart_id":cart.cart_id,
             "user_id":cart.user_id,
             "cart_items":lst,
             "subtotal_ex_tax":cart.subtotal_ex_tax,
@@ -186,6 +197,7 @@ def cart_check_out():
         )
         save_changes(new_order_item)
         new_or = {
+            "order_item_id":new_order_item.order_item_id,
             "quantity":new_order_item.quantity,
             "order_id":new_order_item.order_id,
             "product_id":new_order_item.product_id,
@@ -197,11 +209,12 @@ def cart_check_out():
         db.session.delete(item)
         db.session.commit()
     response_object = {
+        "order_id":new_order.order_id,
         "user_id":new_order.user_id,
+        "order_items":lst,
         "subtotal_ex_tax":new_order.subtotal_ex_tax,
         "tax_total":new_order.tax_total,
-        "total":new_order.total,
-        "order_items":lst
+        "total":new_order.total
     }
     db.session.delete(cart)
     db.session.commit()
