@@ -14,7 +14,7 @@ class Auth:
                 auth_token = User.encode_auth_token(user.public_id)
                 if auth_token:
                     response_object = {
-                        'token': auth_token.decode()
+                        'Authorization': auth_token.decode()
                     }
                     return response_object, 200
             else:
