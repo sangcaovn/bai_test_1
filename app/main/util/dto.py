@@ -20,8 +20,8 @@ class CartDto:
 
 class CartItemDto:
     api = Namespace('cart_item', description='cart item string data to update,delete')
-    cart_item_id = api.model('cart_item_change_qty', {
-        'cart_item_id': fields.String(required=True, description='cart item id hash')
+    cart_item_quantity = api.model('cart_item_change_qty', {
+        'quantity': fields.Integer(required=True, description='quantity')
     })
 
 

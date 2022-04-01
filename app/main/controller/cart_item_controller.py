@@ -7,7 +7,7 @@ from ..util.dto import CartItemDto
 from ..service.cart_service import change_cart_quantity, delete_cart_item
 
 api = CartItemDto.api
-_cart_item = CartItemDto.cart_item_id
+_cart_item = CartItemDto.cart_item_quantity
 
 
 @api.route('/<cart_item_id>')
