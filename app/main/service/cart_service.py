@@ -54,8 +54,8 @@ def save_new_cart(data):
 
             db.session.commit()
             cart_recalc(user_uuid)
-            # return data as required
-            return 'Added item to exited cart', 200
+            # return data
+            return resp_print(user_uuid), 200
         else:
             cart_data=Cart()
             cart_data.cart_uuid = str(uuid.uuid4())
@@ -77,7 +77,7 @@ def save_new_cart(data):
             save_changes(cart_data)
             # update cart price
             cart_recalc(user_uuid)
-            return 'Added item to new cart', 200
+            return resp_print(user_uuid), 200
 
     return {"message":"Bad request!!!"}, 400
 
@@ -107,7 +107,7 @@ def change_cart_quantity(cart_item_id,data):
 
         # update cart price
         cart_recalc(user_uuid)
-        return 'Quantity updated', 200
+        return resp_print(user_uuid), 200
 
     return {"message":"Bad request!!!"}, 400
 
@@ -126,13 +126,15 @@ def checkout_cart():
             order_data.tax_total = cart_data.tax_total
             order_data.total = cart_data.total 
             save_changes(order_data)
-            cart_data.type=TypeEnum.Order.value
+            cart_data.type = TypeEnum.Order.value
+            #db.session.delete(cart_data)
             for itm in cart_data.cart_items:
-                itm.type=TypeEnum.OrderDetail.value
-            db.session.delete(cart_data)
+                itm.type = TypeEnum.OrderDetail.value
+                itm.cart_id = cart_data.id
+    
             db.session.commit()
             # update cart price
-            return "Cart checked out", 200
+            return resp_print(user_uuid), 200
     return {"message" : "PLease login"}, 403
 
 def delete_cart_item(cart_item_uuid):
@@ -143,7 +145,8 @@ def delete_cart_item(cart_item_uuid):
         db.session.delete(cart_item)
         db.session.commit()
         # return data as required
-        return "Item deleted", 200
+        cart_recalc(user_uuid)
+        return resp_print(user_uuid), 200
 
     return {"message" : "PLease login"}, 403
 
@@ -152,13 +155,44 @@ def save_changes(data):
     db.session.commit()
 
 def cart_recalc(user_uuid):
-    
+
     cart= Cart.query.filter_by(user_uuid=user_uuid).first()
     cart_items=CartItem.query.filter_by(cart_id=cart.id).all()
     cart.subtotal_ex_tax = sum(row.subtotal_ex_tax for row in cart_items)
     cart.tax_total = sum(row.tax_total for row in cart_items)
     cart.total = sum(row.total for row in cart_items)
     db.session.commit()
+
+def resp_print(user_uuid):
+    order = Order.query.filter_by(user_uuid=user_uuid).first()
+    cart= Cart.query.filter_by(user_uuid=user_uuid).first()
+    cart_items=CartItem.query.filter_by(cart_id=cart.id).all()
+
+    result = {
+    'order_uuid' : order.order_uuid,
+    'user_uuid' : order.user_uuid,
+    'subtotal_ex_tax': 0,
+    'tax_total': 0,
+    'total': 0
+    }
+    list_order_items = []
+    for data in cart_items:
+        obj_item = {
+            'order_item_id': data.cart_item_uuid,
+            'product_id': data.product_uuid,
+            'quantity': data.quantity,
+            "subtotal_ex_tax": data.subtotal_ex_tax,
+            'tax_total': data.tax_total,
+            'total': data.total
+        } 
+    list_order_items.append(obj_item)
+    result['order_items'] = list_order_items
+    result['subtotal_ex_tax'] = sum(row.subtotal_ex_tax for row in cart_items)
+    result['tax_total'] = sum(row.tax_total for row in cart_items)
+    result['total'] = sum(row.total for row in cart_items)
+    return result
+
+
 
     
 

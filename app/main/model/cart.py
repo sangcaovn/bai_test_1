@@ -13,7 +13,6 @@ class Cart(db.Model):
     cart_items = db.relationship('CartItem', backref='cart', lazy='dynamic')
 
     type=db.Column(db.String(50), default=lambda:TypeEnum.Cart.value)
-    #payment_status=db.Column(db.String(100), nullable=True, default=None)
 
     subtotal_ex_tax=db.Column(db.Float, nullable=True, default= 0)
     tax_total=db.Column(db.Float, nullable=True, default= 0)
