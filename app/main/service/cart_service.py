@@ -66,7 +66,7 @@ def save_new_cart(data):
                     itm.total=sub_total+tax_total
             else:
                 cart_item=CartItem()
-                cart_items.cart_id=cart_data.id
+                cart_item.cart_id=cart_data.id
 
                 cart_item.product_uuid = data.get("productId")
                 cart_item.order_product_uuid =data.get("productId")
