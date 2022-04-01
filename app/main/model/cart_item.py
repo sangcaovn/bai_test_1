@@ -56,5 +56,17 @@ class OrderItem(SharedFieldModel, db.Model):
 
     order = relationship("Order", back_populates="order_items")
 
+    def to_response(self):
+        subtotal_ex_tax = self.quantity * self.product.price
+        tax_total = subtotal_ex_tax * 0.1
+        return {
+            "order_item_id": self.id,
+            "product_id": self.product_id,
+            "quantity": self.quantity,
+            "subtotal_ex_tax": subtotal_ex_tax,
+            "tax_total": tax_total,
+            "total": subtotal_ex_tax + tax_total
+        }
+
     def __repr__(self):
         return "<Order '{}'>".format(self.order_id)

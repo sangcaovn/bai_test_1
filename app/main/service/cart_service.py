@@ -1,7 +1,7 @@
 from flask import request
 
 from app.main import db
-from app.main.model.cart import Cart
+from app.main.model.cart import Cart, Order
 from app.main.model.cart_item import CartItem
 from app.main.model.product import Product
 from app.main.service.auth_helper import Auth
@@ -44,13 +44,10 @@ def save_new_cart(data, customer):
         )
         db.session.add(cart_item)
 
-    # TODO: update calculate tax cart item
     db.session.add(cart)
 
     db.session.commit()
 
-    # return data as required
-    # TODO: this is placeholder return
     return get_cart_by_user_id(customer.id), 200
 
 
@@ -82,7 +79,7 @@ def change_cart_quantity(cart_item_id, data, user):
 def checkout(user):
     cart_data = Cart.query.filter_by(user_id=user.id).first()
     if not cart_data:
-        return "Bad request", 400
+        return "Cart not found", 400
 
     if len(cart_data.cart_items) < 1:
         return "Cart is empty", 400
@@ -91,8 +88,7 @@ def checkout(user):
     db.session.delete(cart_data)
     db.session.commit()
 
-    # return data as required #TODO: change to order
-    return get_cart_by_user_id(user.id), 200
+    return order.to_response(), 200
 
 
 def delete_cart_item(cart_item_uuid):
