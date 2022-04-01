@@ -17,10 +17,6 @@ class CartItem(Resource):
     def delete(self, cart_item_id):
         return delete_cart_item(cart_item_id)
 
-
-@api.route('/<cart_item_id>')
-@api.param('cart_item_id', 'The cart item id using to get cart item')
-class CartItem(Resource):
     @api.expect(_cart_item, validate=True)
     @api.response(201, 'update quantity cart item successfully.')
     @api.doc('change quantity of cart item')

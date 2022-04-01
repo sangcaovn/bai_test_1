@@ -53,7 +53,7 @@ class Cart(SharedFieldModel, db.Model):
         return db_response
 
     def to_order(self):
-        order = Order()
+        order = Order(user_id=self.user_id)
         order.order_items = [cart_item.to_order_item(order.id) for cart_item in self.cart_items]
         return order
 

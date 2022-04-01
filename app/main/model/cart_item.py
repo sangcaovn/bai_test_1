@@ -42,6 +42,7 @@ class CartItem(SharedFieldModel, db.Model):
 
     def to_order_item(self, order_id):
         return OrderItem(
+            product=self.product,
             quantity=self.quantity,
             order_id=order_id
         )

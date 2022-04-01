@@ -18,6 +18,7 @@ def save_new_cart(data, customer):
         return "Invalid input", 400
 
     cart = Cart.get_cart_by_user(user_id=customer.id)
+    cart_items = []
     if cart:
         cart_items = CartItem.query.filter_by(
             cart_id=cart.id,
@@ -39,9 +40,6 @@ def save_new_cart(data, customer):
         cart_item = CartItem(
             product_id=product.id,
             quantity=quantity,
-            subtotal_ex_tax=subtotal_ex_tax,
-            tax_total=tax_total,
-            total=subtotal_ex_tax + tax_total,
             cart=cart
         )
         db.session.add(cart_item)
@@ -86,11 +84,14 @@ def checkout(user):
     if not cart_data:
         return "Bad request", 400
 
+    if len(cart_data.cart_items) < 1:
+        return "Cart is empty", 400
     order = cart_data.to_order()
     db.session.add(order)
+    db.session.delete(cart_data)
     db.session.commit()
 
-    # return data as required
+    # return data as required #TODO: change to order
     return get_cart_by_user_id(user.id), 200
 
 
