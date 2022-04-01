@@ -7,6 +7,7 @@ from app.main.enum.type_enum import TypeEnum
 from app.main.model.cart_item import CartItem
 
 from app.main.model.cart import Cart
+from app.main.model.order import Order
 from app.main.model.product import Product
 from app.main.service.auth_helper import Auth
 
@@ -57,10 +58,10 @@ def save_new_cart(data):
             return 'Added item to exited cart', 200
         else:
             cart_data=Cart()
-            cart_data.cart_uuid=uuid.uuid4()
-            cart_data.user_uuid=user_uuid
+            cart_data.cart_uuid = str(uuid.uuid4())
+            cart_data.user_uuid = user_uuid
 
-            cart_item=CartItem()
+            cart_item = CartItem()
             cart_item.product_uuid=data.get("productId")
 
             sub_total=int(data.get("quantity"))*product.price
@@ -115,11 +116,20 @@ def checkout_cart():
     if user_uuid:
         cart_data=Cart.query.filter_by(user_uuid=user_uuid).first()
         if cart_data:
+            order_data= Order()
+            order_data.payment_status="INIT"
+
+            order_data.order_uuid = str(uuid.uuid4())
+            order_data.user_uuid = cart_data.user_uuid
+    
+            order_data.subtotal_ex_tax = cart_data.subtotal_ex_tax
+            order_data.tax_total = cart_data.tax_total
+            order_data.total = cart_data.total 
+            save_changes(order_data)
             cart_data.type=TypeEnum.Order.value
-            cart_data.payment_status="INIT"
-            
             for itm in cart_data.cart_items:
                 itm.type=TypeEnum.OrderDetail.value
+            db.session.delete(cart_data)
             db.session.commit()
             # update cart price
             return "Cart checked out", 200
@@ -142,6 +152,7 @@ def save_changes(data):
     db.session.commit()
 
 def cart_recalc(user_uuid):
+    
     cart= Cart.query.filter_by(user_uuid=user_uuid).first()
     cart_items=CartItem.query.filter_by(cart_id=cart.id).all()
     cart.subtotal_ex_tax = sum(row.subtotal_ex_tax for row in cart_items)
