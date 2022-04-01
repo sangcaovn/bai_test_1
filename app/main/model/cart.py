@@ -12,6 +12,7 @@ class Cart(db.Model):
 
     cart_uuid = db.Column(db.String(100), unique=True, default=lambda: uuid.uuid4())
     user_uuid = db.Column(db.String(100), unique=True)
+    order_user_uuid = db.Column(db.String(100), nullable=True)
     cart_items = db.relationship('CartItem', backref='cart', lazy='dynamic')
 
     type=db.Column(db.String(50), default=lambda:TypeEnum.Cart.value)

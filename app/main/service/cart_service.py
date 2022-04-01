@@ -89,6 +89,7 @@ def save_new_cart(data):
             cart_data=Cart()
             cart_data.cart_uuid=uuid.uuid4()
             cart_data.user_uuid=user_uuid
+            cart_data.order_user_uuid=user_uuid
 
             cart_item=CartItem()
             cart_item.product_uuid=data.get("productId")
@@ -147,6 +148,8 @@ def checkout_cart():
         if cart_data:
             cart_data.type=TypeEnum.Order.value
             cart_data.payment_status="INIT"
+
+            cart_data.user_uuid=uuid.uuid4()
             
             for itm in cart_data.cart_items:
                 itm.type=TypeEnum.OrderDetail.value
