@@ -1,8 +1,7 @@
-from marshmallow import Schema, fields
 import uuid
 
 from app.main.enum.type_enum import TypeEnum
-from app.main.model.cart_item import CartItemSchema
+#from app.main.model.cart_item import CartItemSchema
 from .. import db
 
 class Cart(db.Model):
@@ -17,14 +16,6 @@ class Cart(db.Model):
     type=db.Column(db.String(50), default=lambda:TypeEnum.Cart.value)
     payment_status=db.Column(db.String(100), nullable=True, default=None)
 
-
-    # def __init__(self, data):
-    #     self.cart_uuid = data.get("cart_uuid")
-    #     self.order_uuid = data.get("order_uuid")
-    #     self.user_uuid = data.get("user_uuid")
-
-class CartSchema(Schema):
-    id = fields.Integer()
-    cart_uuid = fields.String()
-    user_uuid = fields.String()
-    cart_items=fields.Nested(CartItemSchema)
+    subtotal_ex_tax=db.Column(db.Float, nullable=True, default= 0)
+    tax_total=db.Column(db.Float, nullable=True, default= 0)
+    total=db.Column(db.Float, nullable=True, default= 0)

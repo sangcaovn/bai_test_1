@@ -66,10 +66,10 @@ class Auth:
             return response_object, 401
 
     @staticmethod
-    def get_cart_from_user_id(new_request):
+    def get_token_from_userid(new_request):
         # get the auth token
         auth_token = new_request.headers.get('Authorization')
+        print(auth_token)
         if auth_token:
             return User.decode_auth_token(auth_token)
-        
         return None

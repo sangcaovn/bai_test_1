@@ -9,10 +9,9 @@ class Config:
     RESTX_MASK_SWAGGER = False
 
 
-
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "postgresql://admin:admin@localhost:5432/test1_db"
+    SQLALCHEMY_DATABASE_URI = "postgresql://admin:admin@localhost:5432/test1db"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 

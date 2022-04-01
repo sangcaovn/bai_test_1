@@ -7,7 +7,7 @@ class UserDto:
         'email': fields.String(required=True, description='user email address'),
         'username': fields.String(required=True, description='user username'),
         'password': fields.String(required=True, description='user password'),
-        'user_id': fields.String(description='user Identifier')
+        #'user_id': fields.String(description='user Identifier')
     })
 
 
@@ -21,7 +21,7 @@ class CartDto:
 class CartItemDto:
     api = Namespace('cart_item', description='cart item string data to update,delete')
     cart_item_id = api.model('cart_item_change_qty', {
-        'cart_item_id': fields.String(required=True, description='cart item id hash')
+        'quantity': fields.String(required=True, description='quantity')
     })
 
 

@@ -1,52 +1,27 @@
 
-import json
+#import json
 import uuid
 from app.main import db
-from flask import request, jsonify
+from flask import request#, jsonify
 from app.main.enum.type_enum import TypeEnum
-from app.main.model.cart_item import CartItem, CartItemSchema
+from app.main.model.cart_item import CartItem
 
-from app.main.model.cart import Cart, CartSchema
+from app.main.model.cart import Cart
 from app.main.model.product import Product
 from app.main.service.auth_helper import Auth
 
-cart_schema=CartSchema()
-cart_item_schema=CartItemSchema(many=True)
-
-def response_data(user_uuid, payment_status=None):
-    cart= Cart.query.filter_by(user_uuid=user_uuid)
-    if payment_status:
-        cart=cart.filter_by(type=TypeEnum.Order).first()
-    else:
-        cart=cart.first()
-    obj= {
-            "cart_id": cart.cart_uuid,
-            "userId": cart.user_uuid,
-            "cart_items": None,
-            "subtotal_ex_tax": 0,
-            "tax_total": 0,
-            "total": 0
-        }
-
-    obj["subtotal_ex_tax"]=sum(row.subtotal_ex_tax for row in cart.cart_items)
-    obj["tax_total"]=sum(row.tax_total for row in cart.cart_items)
-    obj["total"]=sum(row.total for row in cart.cart_items)
-    obj["cart_items"]=json.loads(cart_item_schema.dumps(cart.cart_items))
-    if payment_status:
-        obj["payment_status"]=payment_status
-    return obj
-
 def save_new_cart(data):
-    user_uuid=Auth.get_cart_from_user_id(request)
+    user_uuid=Auth.get_token_from_userid(request)
     if user_uuid:
         cart_data=Cart.query.filter_by(user_uuid=user_uuid).first()
         product=Product.get_product_by_uuid(data.get("productId"))
         if not product: 
-            return {"message":"could not found product with input id!!!"}, 403
+            return {"message":"Product not found"}, 400
 
         if cart_data:
             cart_items=CartItem.query.filter_by(cart_id=cart_data.id,
             product_uuid=data.get("productId")).all()
+            #print(f'{cart_items}')
             if cart_items:
                 for itm in cart_items:
                     tmp=Product.get_product_by_uuid(itm.product_uuid)
@@ -56,21 +31,20 @@ def save_new_cart(data):
                     sub_total=quantity*tmp.price
                     itm.subtotal_ex_tax=sub_total
 
-                    tax_total=(sub_total*10)/100
+                    tax_total=sub_total*0.1
 
                     itm.tax_total=tax_total
                     itm.total=sub_total+tax_total
             else:
                 cart_item=CartItem()
-                cart_items.cart_id=cart_data.id
+                cart_item.cart_id=cart_data.id
 
                 cart_item.product_uuid=data.get("productId")
-                cart_item.subtotal_ex_tax=int(data.get("quantity"))
 
                 sub_total=int(data.get("quantity"))*product.price
                 cart_item.subtotal_ex_tax=sub_total
 
-                tax_total=(sub_total*10)/100
+                tax_total=sub_total*0.1
                 cart_item.tax_total=tax_total
 
                 cart_item.total=sub_total+tax_total
@@ -78,9 +52,9 @@ def save_new_cart(data):
                 db.session.add(cart_item)
 
             db.session.commit()
-
+            cart_recalc(user_uuid)
             # return data as required
-            return response_data(user_uuid), 200
+            return 'Added item to exited cart', 200
         else:
             cart_data=Cart()
             cart_data.cart_uuid=uuid.uuid4()
@@ -93,47 +67,51 @@ def save_new_cart(data):
             cart_item.subtotal_ex_tax=sub_total
 
             cart_item.quantity=int(data.get("quantity"))
-            tax_total=(sub_total*10)/100
+            tax_total=sub_total*0.1
+
             cart_item.tax_total=tax_total
             cart_item.total=sub_total+tax_total
 
             cart_data.cart_items.append(cart_item)
             save_changes(cart_data)
+            # update cart price
+            cart_recalc(user_uuid)
+            return 'Added item to new cart', 200
 
-            # return data as required
-            return jsonify(response_data(user_uuid)), 200
-
-    return {"message":"Bad request!!!"}, 403
+    return {"message":"Bad request!!!"}, 400
 
 def change_cart_quantity(cart_item_id,data):
-    user_uuid=Auth.get_cart_from_user_id(request)
+    user_uuid=Auth.get_token_from_userid(request)
+
     if not user_uuid:
-        return {"message":"Bad request!!!"}, 403
+        return {"message" : "PLease login"}, 403
 
     cart_item=CartItem.query.filter_by(cart_item_uuid=cart_item_id).first()
     if cart_item:
         product=Product.query.filter_by(product_uuid=cart_item.product_uuid).first()
         if not product:
-            return {"message":"Bad request!!!"}, 403
+            return {"message":"Product not found"}, 400
 
-        # calculate values for cart-item
-        quantity=cart_item.quantity + int(data.get("quantity"))
-        sub_total=quantity*product.price
+        # change values for cart-item
+        cart_item.quantity = int(data.get("quantity"))
+        #print(quantity)
+        sub_total = cart_item.quantity*product.price
         cart_item.subtotal_ex_tax = sub_total
 
-        tax_total=(sub_total*10)/100
-        cart_item.tax_total =tax_total
+        tax_total = sub_total*0.1
+        cart_item.tax_total = tax_total
 
         cart_item.total=sub_total+tax_total
         db.session.commit()
 
-        # return data as required
-        return jsonify(response_data(user_uuid)), 200
+        # update cart price
+        cart_recalc(user_uuid)
+        return 'Quantity updated', 200
 
-    return {"message":"Bad request!!!"}, 403
+    return {"message":"Bad request!!!"}, 400
 
 def checkout_cart():
-    user_uuid=Auth.get_cart_from_user_id(request)
+    user_uuid=Auth.get_token_from_userid(request)
     if user_uuid:
         cart_data=Cart.query.filter_by(user_uuid=user_uuid).first()
         if cart_data:
@@ -142,26 +120,35 @@ def checkout_cart():
             
             for itm in cart_data.cart_items:
                 itm.type=TypeEnum.OrderDetail.value
-                
             db.session.commit()
-
-            # return data as required
-            return jsonify(response_data(user_uuid,"INIT")), 200
-    return {"message":"Bad request!!!"}, 403
+            # update cart price
+            return "Cart checked out", 200
+    return {"message" : "PLease login"}, 403
 
 def delete_cart_item(cart_item_uuid):
-    user_uuid=Auth.get_cart_from_user_id(request)
+    user_uuid=Auth.get_token_from_userid(request)
     if user_uuid:
+
         cart_item=CartItem.query.filter_by(cart_item_uuid=cart_item_uuid).first()
         db.session.delete(cart_item)
-        
         db.session.commit()
-
         # return data as required
-        return jsonify(response_data(user_uuid)), 200
+        return "Item deleted", 200
 
-    return {"message":"Bad request!!!"}, 403
+    return {"message" : "PLease login"}, 403
 
 def save_changes(data):
     db.session.add(data)
     db.session.commit()
+
+def cart_recalc(user_uuid):
+    cart= Cart.query.filter_by(user_uuid=user_uuid).first()
+    cart_items=CartItem.query.filter_by(cart_id=cart.id).all()
+    cart.subtotal_ex_tax = sum(row.subtotal_ex_tax for row in cart_items)
+    cart.tax_total = sum(row.tax_total for row in cart_items)
+    cart.total = sum(row.total for row in cart_items)
+    db.session.commit()
+
+    
+
+
