@@ -1,5 +1,6 @@
 from flask import request
 from flask_restx import Resource
+from app.main.service.order_service import update_order_status
 
 from app.main.util.decorator import token_required
 from ..util.dto import CartDto
@@ -35,3 +36,12 @@ class CartCheckout(Resource):
     def post(self):
         """checkout cart for logging-in user"""
         return checkout()
+
+# @api.route('/change-order-status')
+# class OrderStatusChange(Resource):
+#     @api.response(200, 'Change order status successfully.')
+#     # @api.expect(_order, validate = True)
+#     def post(self):
+#         """Change order status"""
+#         data = request.json
+#         return update_order_status(data=data)

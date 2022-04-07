@@ -31,3 +31,10 @@ class CartItemDtoQuantity:
     quantity_updater = api.model('CartItemUpdate', {
         'quantity': fields.Integer(required=True, description='The new quantity to update '),
     })
+
+class OrderStatus:
+    api = Namespace('change_order_status', description='order related operations')
+    order_status_modifier = api.model('OrderStatusModifier', {
+        'order_id': fields.Integer(required=True, description='Order ID'),
+        'status': fields.String(required=True, description='Order Status')
+    })

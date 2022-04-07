@@ -24,6 +24,18 @@ def save_new_order(user_id):
 
     return order_id
     
+def update_order_status(data):
+    order_id = data['order_id']
+    status = data['status']
+    num_rows_updated = Order.query.filter_by(id=order_id).update(dict(payment_status=status))
+    db.session.commit()
+
+    response_object = {
+        "order_id": f"{order_id}",
+        "status": f"{status}"
+    }
+
+    return response_object, 200
 
 def save_changes(order: Order):
     db.session.add(order)
