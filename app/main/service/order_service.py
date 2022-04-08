@@ -27,15 +27,21 @@ def save_new_order(user_id):
 def update_order_status(data):
     order_id = data['order_id']
     status = data['status']
-    num_rows_updated = Order.query.filter_by(order_uuid=order_id).update(dict(payment_status=status))
-    db.session.commit()
+    try:
+        num_rows_updated = Order.query.filter_by(order_uuid=order_id).update(dict(payment_status=status))
+        db.session.commit()
 
-    response_object = {
-        "order_id": f"{order_id}",
-        "status": f"{status}"
-    }
-
-    return response_object, 200
+        response_object = {
+            "order_id": f"{order_id}",
+            "status": f"{status}"
+        }
+        return response_object, 200
+    except Exception as ex:
+        response_object = {
+            "message": "Bad Request",
+            "error": str(ex)
+        }
+        return response_object, 400
 
 def save_changes(order: Order):
     db.session.add(order)
