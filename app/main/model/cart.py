@@ -55,7 +55,7 @@ class Order(db.Model):
     __tablename__ = 'order'
 
     id = db.Column(db.String(100), primary_key=True, default=generate_uuid)
-    payment_status = db.Column(db.Integer, default=PaymentStatus.INIT.value)
+    payment_status = db.Column(db.Integer, default=PaymentStatus.INITIALIZED.value)
     order_items = db.relationship('OrderItem', back_populates='order', lazy='dynamic')
     user_id = db.Column(db.ForeignKey('user.id'))
 

@@ -39,12 +39,10 @@ class ProductDto:
         'price': fields.String(required=True, description='The product price'),
     })
 
-# class CartDto:
-#     api = Namespace('cart', description='cart related operations')
-#     cart = api.model('cart', {
-#         'quantity': fields.String(description='The cart quantity'),
-#         'product_id': fields.String(description='The product id'),
-#     })
-#     cart_checkout = api.model('cart_checkout', {
-#         'cart_id': fields.String()
-#     })
+
+class OrderDto:
+    api = Namespace('order', description='order related operations')
+    order = api.model('order', {
+        'order_id': fields.String(required=True, description='The product name'),
+        'payment_status': fields.String(required=True, description='The product price'),
+    })

@@ -1,6 +1,11 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class PaymentStatus(Enum):
-    INIT = 0
-    PAID = 1
+    INITIALIZED = auto()
+    CONFIRMED = auto()
+    VERIFIED = auto()
+    COMPLETED = auto()
+    EXPIRED = auto()
+    CANCELED = auto()
+    FAILED = auto()
