@@ -11,7 +11,7 @@ class Product(db.Model):
     name = db.Column(db.String(255))
     price = db.Column(db.Float)
     quantity = db.Column(db.Integer)
-    is_available = db.Column(db.Boolean, nullable=False, default=False)
+    is_available = db.Column(db.Boolean, nullable=False, default=True)
 
     # Define relationship
     # cart_item = db.relationship("CartItem", uselist=False, backref="product")
