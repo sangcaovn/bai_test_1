@@ -19,7 +19,7 @@ def create_a_product (data: Dict[str, str]):
             'status': 'success',
             'message': 'Successfully created.',
             'data': {
-                "product_id" : new_product.id,
+                "product_id" : new_product.product_id,
                 "name" : new_product.name,
                 "description" : new_product.description,
                 "price" : new_product.price
