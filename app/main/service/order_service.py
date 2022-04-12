@@ -42,6 +42,32 @@ def create_a_order(user_id):
         } 
     }
     return response_object, 201
+def update_a_order(order_id, data: Dict[str, str]):
+    order = Order.query.filter_by(order_id=order_id).first()
+    if not order:
+        response_object = {
+            'status': 'fail',
+            'message': 'Order not exists.',
+        }
+        return response_object, 404
+    order.payment_status = data['payment_status']
+    save_changes(order)
+    response_object = {
+            'status': 'success',
+            'message': 'Successfully updated',
+            'data': {
+                "order_id" : order.order_id,
+                "quantity" : order.quantity,
+                "user_id" : order.user_id,
+                "subtotal_ex_tax" : order.subtotal_ex_tax,
+                "tax_total" : order.tax_total,
+                "total" : order.total,
+                "payment_status" : order.payment_status
+            }
+    }
+    return response_object, 200
+def get_a_order(order_id):
+    return Order.query.filter_by(order_id =order_id).first()
 def save_changes(data: Order):
     db.session.add(data)
     db.session.commit()

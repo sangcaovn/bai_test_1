@@ -41,4 +41,6 @@ class OrderDto:
     api = Namespace('order', description='order related operations')
     order = api.model('order', {
         'cart_id' : fields.String(description='The id of cart'),
+        'order_id' : fields.String(description='The id of order_id'),
+        'payment_status' : fields.String(description='The payment status of order'),
     })
