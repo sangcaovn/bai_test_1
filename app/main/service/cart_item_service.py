@@ -99,6 +99,9 @@ def update_quantity(cart_item_id, data):
     if not existed_cart_item:
         return "Cart item not found", 404
 
+    if new_quantity <= 0:
+        return "New quantity is not acceptable!", 400
+
     product_id = existed_cart_item.product_id
     product = Product.query.filter_by(public_id=product_id).first()
     price = product.price
@@ -174,6 +177,8 @@ def delete_cart_item(cart_item_id):
     cart = Cart.query.filter_by(user_id = user_id).first()
 
     cart_item = CartItem.query.filter_by(id = cart_item_id).first()
+    if not cart_item:
+        return "Cart item not found", 404
 
     CartItem.query.filter_by(id=cart_item_id).delete()
     db.session.commit()

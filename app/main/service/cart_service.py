@@ -33,6 +33,7 @@ def update_cart(cart_id: id, cart_items):
 def add_cart(data):
     user_id = Auth.get_cart_from_user_id(request)
     cart = Cart.query.filter_by(user_id=user_id).first()
+    user = User.query.filter_by(id=user_id).first()
     if not cart:
         # Create a new cart
         new_cart = Cart(
@@ -46,9 +47,9 @@ def add_cart(data):
         cart_id = cart.id
         cart_uuid = cart.cart_uuid
         # save cart item
-        return save_new_item(user_id, cart_uuid, cart_id=cart_id, data=data)
+        return save_new_item(user.public_id, cart_uuid, cart_id=cart_id, data=data)
     else:
-        return save_new_item(user_id, cart.cart_uuid, cart_id=cart.id, data=data)
+        return save_new_item(user.public_id, cart.cart_uuid, cart_id=cart.id, data=data)
 
 
 def checkout():

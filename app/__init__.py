@@ -19,7 +19,7 @@ authorizations = {
 
 api = Api(
     blueprint,
-    title='FLASK RESTPLUS(RESTX) API BOILER-PLATE WITH JWT',
+    title='Assignment APIs 1',
     version='1.0',
     description='Trinh Quoc Cuong - Exercise 1',
     authorizations=authorizations,
