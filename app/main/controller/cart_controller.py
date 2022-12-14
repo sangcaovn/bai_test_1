@@ -13,7 +13,6 @@ _cart = CartDto.cart
 @api.route('/add')
 class Cart(Resource):
     @api.expect(_cart, validate=True)
-    @api.response(200, 'Cart successfully created.')
     @api.doc('create a new cart')
     @token_required
     def post(self):
@@ -24,7 +23,6 @@ class Cart(Resource):
 
 @api.route('/checkout')
 class CartCheckout(Resource):
-    @api.response(201, 'Checkout cart successfully created.')
     @api.doc('Checkout cart')
     @token_required
     def post(self):

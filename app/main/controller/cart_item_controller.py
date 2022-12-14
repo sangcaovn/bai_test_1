@@ -13,7 +13,6 @@ _cart_item = CartItemDto.cart_item_quantity
 @api.route('/<cart_item_id>')
 @api.param('cart_item_id', 'The cart item id using to get cart item')
 class CartItem(Resource):
-    @api.response(201, 'delete cart item successfully.')
     @api.doc('delete cart item cart item')
     @token_required
     def delete(self,cart_item_id):

@@ -12,7 +12,8 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "postgresql://admin:admin@localhost:5432/test1_db"
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'sangcao.db')
+    # SQLALCHEMY_DATABASE_URI = "postgresql://admin:admin@localhost:5432/test1_db"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 
