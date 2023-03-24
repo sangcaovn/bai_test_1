@@ -25,6 +25,6 @@ api = Api(
 )
 
 api.add_namespace(user_ctl, path='/user')
-api.add_namespace(auth_ctl, path='/user')
+api.add_namespace(auth_ctl, path='/auth')
 api.add_namespace(cart_ctl)
 api.add_namespace(cart_item_ctl, path='/cart-item')
