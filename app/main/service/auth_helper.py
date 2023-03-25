@@ -1,5 +1,6 @@
 from app.main.model.user import User
 from typing import Dict
+import json
 
 
 class Auth:
@@ -13,9 +14,12 @@ class Auth:
                 auth_token = User.encode_auth_token(user.user_uuid)
                 if auth_token:
                     response_object = {
-                        'Authorization': auth_token.decode()
+                        'token': auth_token.decode(),
+                        'user': {'id':user.id,'username': user.username,'admin':user.admin,
+                        'registered_on':str(user.registered_on)}
                     }
-                    return response_object, 200
+
+                    return json.dumps(response_object), 200
             else:
                 response_object = {
                     'status': 'fail',
