@@ -13,16 +13,10 @@ class Auth:
             if user and user.check_password(data.get('password')):
                 auth_token = User.encode_auth_token(user.user_uuid)
                 if auth_token:
-                    response_object = {
-                        'token': auth_token.decode(),
-                        'user': {'id':user.id,'username': user.username,'admin':user.admin,
-                        'registered_on':str(user.registered_on)}
-                    }
-
-                    return json.dumps(response_object), 200
+                    return {'token': auth_token.decode()}, 200
             else:
                 response_object = {
-                    'status': 'fail',
+                    'status': 'failed',
                     'message': 'email or password does not match.'
                 }
                 return response_object, 401
@@ -39,11 +33,13 @@ class Auth:
     def get_logged_in_user(new_request):
         # get the auth token
         auth_token = new_request.headers.get('Authorization')
+        print ("auth_token",auth_token)
         
         if auth_token:
             resp = User.decode_auth_token(auth_token)
             if resp:
                 user = User.query.filter_by(user_uuid=resp).first()
+                print ("user",user)
                 response_object = {
                     'status': 'success',
                     'data': {
